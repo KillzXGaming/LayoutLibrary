@@ -20,14 +20,7 @@ namespace LayoutLibrary.Cafe
             ushort count = reader.ReadUInt16();
             reader.Seek(2); //padding
 
-            long pos = reader.Position;
-            uint[] offsets = reader.ReadUInt32s(count);
-            for (int i = 0; i < offsets.Length; i++)
-            {
-                reader.SeekBegin(offsets[i] + pos);
-                values.Add(reader.ReadZeroTerminatedString());
-            }
-            return values;
+            return ReadStringOffsets(reader, count);
         }
 
         public static List<string> ReadStringOffsets(FileReader reader, int count)
@@ -560,8 +553,6 @@ namespace LayoutLibrary.Cafe
 
         #region TXT1
 
-        #endregion
-
         public static TextPane ReadTextPane(FileReader reader, BflytFile header)
         {
             long pos = reader.Position - 8;
@@ -640,6 +631,8 @@ namespace LayoutLibrary.Cafe
 
             return pane;
         }
+
+        #endregion
 
         #region BND1
 
