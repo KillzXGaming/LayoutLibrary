@@ -14,13 +14,19 @@ namespace LayoutLibrary.XmlConverter
     {
         public byte ColorType;
 
-
+        [XmlArrayItem("Color")]
         public List<XmlColor> Colors = new List<XmlColor>();
+        [XmlArrayItem("TextureMap")]
         public List<XmlMaterialTextureMap> Textures = new List<XmlMaterialTextureMap>();
+        [XmlArrayItem("TextureSrt")]
         public List<XmlMaterialTextureSrt> TextureSrts = new List<XmlMaterialTextureSrt>();
+        [XmlArrayItem("TexCoordGen")]
         public List<XmlMaterialTexCoordGen> TexCoordGens = new List<XmlMaterialTexCoordGen>();
+        [XmlArrayItem("ProjTexGenParam")]
         public List<XmlProjectionTexGenParam> ProjectionTexGens = new List<XmlProjectionTexGenParam>();
+        [XmlArrayItem("IndirectParameter")]
         public List<XmlIndirectParameter> IndirectSrts = new List<XmlIndirectParameter>();
+        [XmlArrayItem("TevCombiner")]
         public List<XmlMaterialTevCombiner> TevCombiners = new List<XmlMaterialTevCombiner>();
 
         public XmlAlphaCompare AlphaCompare;
@@ -31,7 +37,9 @@ namespace LayoutLibrary.XmlConverter
 
         public XmlMaterialDetailedCombiner DetailedCombiner;
 
+        [XmlArrayItem("UserCombiner")]
         public List<XmlMaterialUserCombiner> UserCombiners = new List<XmlMaterialUserCombiner>();
+        [XmlArrayItem("BrickRepeat")]
         public List<BrickRepeatShaderInfo> BrickRepeatShaderInfos = new List<BrickRepeatShaderInfo>();
 
         public bool UseTextureOnly = false;

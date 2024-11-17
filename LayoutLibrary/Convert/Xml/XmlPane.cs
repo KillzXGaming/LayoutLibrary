@@ -48,6 +48,8 @@ namespace LayoutLibrary.XmlConverter
 
         public XmlUserData UserData;
 
+        [XmlArray("Children")]
+        [XmlArrayItem("Pane")]
         public XmlPane[] Children;
 
         public XmlPane() { }

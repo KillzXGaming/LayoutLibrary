@@ -13,6 +13,7 @@ namespace LayoutLibrary.XmlConverter
 {
     public class XmlPicturePane : XmlPaneContent
     {
+        [XmlArrayItem("TexCoord")]
         public XmlTexCoord[] TexCoords = new XmlTexCoord[0];
 
         public XmlColor ColorTopLeft;

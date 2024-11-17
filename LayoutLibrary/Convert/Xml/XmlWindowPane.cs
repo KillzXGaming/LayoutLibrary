@@ -29,6 +29,7 @@ namespace LayoutLibrary.XmlConverter
 
         public XmlWindowContent Content;
 
+        [XmlArrayItem("WindowFrame")]
         public XmlWindowFrame[] Frames = new XmlWindowFrame[0];
 
         public XmlWindowPane() { }
@@ -129,6 +130,7 @@ namespace LayoutLibrary.XmlConverter
 
     public class XmlWindowContent
     {
+        [XmlArrayItem("TexCoord")]
         public XmlTexCoord[] TexCoords = new XmlTexCoord[0];
 
         public XmlColor ColorTopLeft;

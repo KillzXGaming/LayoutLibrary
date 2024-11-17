@@ -14,6 +14,8 @@ namespace LayoutLibrary.XmlConverter
 
         public List<string> Panes = new List<string>();
 
+        [XmlArray("Children")]
+        [XmlArrayItem("Group")]
         public XmlGroup[] Children;
 
         public XmlGroup() { }

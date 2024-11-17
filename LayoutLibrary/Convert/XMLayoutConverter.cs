@@ -146,6 +146,8 @@ namespace LayoutLibrary.XmlConverter
             [XmlElement]
             public XmlLayoutHeaderInfo Header;
 
+            [XmlArray("UserData")]
+            [XmlArrayItem("UserData")]
             public List<XmlUserData> UserData = new List<XmlUserData>();
 
             public XmlLayout Layout;

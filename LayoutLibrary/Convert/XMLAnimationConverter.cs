@@ -276,6 +276,8 @@ namespace LayoutLibrary.XmlConverter
             [XmlAttribute]
             public bool Loop;
 
+            [XmlArray("AnimGroups")]
+            [XmlArrayItem("Group")]
             public List<XmlAnimationGroup> Groups = new List<XmlAnimationGroup>();
         }
 
@@ -287,6 +289,9 @@ namespace LayoutLibrary.XmlConverter
             [XmlAttribute]
             public string Type;
 
+
+            [XmlArray("AnimSubGroups")]
+            [XmlArrayItem("SubGroup")]
             public List<XmlAnimationSubGroup> SubGroups = new List<XmlAnimationSubGroup>();
         }
 
@@ -297,6 +302,8 @@ namespace LayoutLibrary.XmlConverter
             [XmlAttribute]
             public byte Type;
 
+            [XmlArray("Tracks")]
+            [XmlArrayItem("Track")]
             public List<XmlAnimationTrack> Tracks = new List<XmlAnimationTrack>();
         }
 

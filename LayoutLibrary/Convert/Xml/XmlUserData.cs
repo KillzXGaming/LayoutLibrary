@@ -9,6 +9,8 @@ namespace LayoutLibrary.XmlConverter
 {
     public class XmlUserData
     {
+        [XmlArray("Entries")]
+        [XmlArrayItem("UserDataEntry")]
         public List<XmlUserDataEntry> Entries = new List<XmlUserDataEntry>();
 
         public byte[]? RawData;
