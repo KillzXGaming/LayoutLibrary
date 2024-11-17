@@ -9,6 +9,21 @@ namespace MetaphorMessageConverter
     {
         public static void Main(string[] args)
         {
+            if (args.Length == 0)
+            {
+                Console.WriteLine($"Tool by KillzXGaming");
+                Console.WriteLine($"Usage:");
+
+                Console.WriteLine($" Layout:");
+                Console.WriteLine($"  LayoutLibrary.CLI layout.bflyt (converts to xml)");
+                Console.WriteLine($"  LayoutLibrary.CLI layout.bflyt.xml (converts back to bflyt)");
+                Console.WriteLine($"");
+                Console.WriteLine($" Animations:");
+                Console.WriteLine($"  LayoutLibrary.CLI anim.bflan (converts to xml)");
+                Console.WriteLine($"  LayoutLibrary.CLI anim.bflan.xml (converts back to bflan)");
+                return;
+            }
+
             foreach (var arg in args)
             {
                 if (File.Exists(arg))
