@@ -132,7 +132,8 @@ namespace LayoutLibrary.Files
                 sectionCount = reader.ReadUInt16();
 
                 // Version == 10 / 1.0
-                VersionMajor = 1;
+                VersionMajor = (byte)(Version / 10); 
+                VersionMinor = (byte)(Version % 10);
             }
             else
             {
@@ -195,6 +196,7 @@ namespace LayoutLibrary.Files
             if (Magic == "RLAN" || Magic == "RLYT")
             {
                 HeaderSize = 16;
+                Version = (ushort)(VersionMajor * 10 + VersionMinor);
 
                 writer.Write((ushort)Version);
                 _ofsFileSize = writer.Position;
