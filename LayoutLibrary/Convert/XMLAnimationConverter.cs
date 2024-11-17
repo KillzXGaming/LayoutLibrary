@@ -103,7 +103,7 @@ namespace LayoutLibrary.XmlConverter
 
                 foreach (var key in track.KeyFrames)
                 {
-                    xmlTrack.Tracks.Add(new XmlKeyFrame()
+                    xmlTrack.KeyFrames.Add(new XmlKeyFrame()
                     {
                         Frame = key.Frame,
                         Value = key.Value,
@@ -206,7 +206,7 @@ namespace LayoutLibrary.XmlConverter
                              : byte.Parse(xmlTrack.Target)
                 };
 
-                foreach (var xmlKeyFrame in xmlTrack.Tracks)
+                foreach (var xmlKeyFrame in xmlTrack.KeyFrames)
                 {
                     track.KeyFrames.Add(new KeyFrame
                     {
@@ -302,7 +302,6 @@ namespace LayoutLibrary.XmlConverter
             [XmlAttribute]
             public byte Type;
 
-            [XmlArray("Tracks")]
             [XmlArrayItem("Track")]
             public List<XmlAnimationTrack> Tracks = new List<XmlAnimationTrack>();
         }
@@ -316,7 +315,8 @@ namespace LayoutLibrary.XmlConverter
             [XmlAttribute]
             public string CurveType;
 
-            public List<XmlKeyFrame> Tracks = new List<XmlKeyFrame>();
+            [XmlArrayItem("KeyFrame")]
+            public List<XmlKeyFrame> KeyFrames = new List<XmlKeyFrame>();
 
         }
 
