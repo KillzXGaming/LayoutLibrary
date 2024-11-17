@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Folder Include="Lib\" />
+    <Folder Include="Sections\Shader\" />
   </ItemGroup>
 
   <ItemGroup>

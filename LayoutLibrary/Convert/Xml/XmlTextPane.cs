@@ -1,0 +1,144 @@
+﻿using LayoutLibrary.Cafe;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Serialization;
+
+namespace LayoutLibrary.XmlConverter
+{
+    public class XmlTextPane : XmlPaneContent
+    {
+        public string Text;
+
+        public ushort TextLength;
+        public ushort MaxTextLength;
+
+        public string Font;
+
+        public byte TextAlignment;
+        public LineAlign LineAlignment;
+        public float ItalicTilt;
+        public XmlColor FontTopColor;
+        public XmlColor FontBottomColor;
+        public XmlVector2 FontSize;
+        public float CharacterSpace;
+        public float LineSpace;
+        public XmlVector2 ShadowXY;
+        public XmlVector2 ShadowXYSize;
+        public XmlColor ShadowForeColor;
+        public XmlColor ShadowBackColor;
+        public float ShadowItalic;
+        public string TextBoxName;
+
+        public byte _flags;
+        public byte Unknown3;
+
+        public float Unknown1;
+        public float Unknown2;
+
+
+        public bool ShadowEnabled;
+        public bool RestrictedTextLengthEnabled;
+        public bool PerCharTransformEnabled;
+
+        public OriginX HorizontalAlignment;
+        public OriginY VerticalAlignment;
+
+        public XmlPerCharacterTransform PerCharacterTransform;
+
+        [XmlElement("Material", typeof(XmlMaterialCafe))]
+        public XmlMaterialBase Material;
+
+        public XmlTextPane() { }
+        public XmlTextPane(TextPane pane, BflytFile bflyt)
+        {
+            this.Text = pane.Text;
+            this.TextLength = pane.TextLength;
+            this.MaxTextLength = pane.MaxTextLength;
+            this.Material = XmlMaterialBase.Create(bflyt, pane.MaterialIndex);
+            this.Font = bflyt.FontList.Count > pane.FontIndex ? bflyt.FontList[pane.FontIndex] : "";
+            this.TextAlignment = pane.TextAlignment;
+            this.LineAlignment = pane.LineAlignment;
+            this.ItalicTilt = pane.ItalicTilt;
+            this.FontTopColor = new XmlColor(pane.FontTopColor);
+            this.FontBottomColor = new XmlColor(pane.FontBottomColor);
+            this.FontSize = new XmlVector2(pane.FontSize);
+            this.CharacterSpace = pane.CharacterSpace;
+            this.LineSpace = pane.LineSpace;
+            this.ShadowXY = new XmlVector2(pane.ShadowXY);
+            this.ShadowXYSize = new XmlVector2(pane.ShadowXYSize);
+            this.ShadowForeColor = new XmlColor(pane.ShadowForeColor);
+            this.ShadowBackColor = new XmlColor(pane.ShadowBackColor);
+            this.ShadowItalic = pane.ShadowItalic;
+            this.TextBoxName = pane.TextBoxName;
+
+            this._flags = pane._flags;
+            this.Unknown3 = pane.Unknown3;
+            this.Unknown1 = pane.Unknown1;
+            this.Unknown2 = pane.Unknown2;
+
+            this.ShadowEnabled = pane.ShadowEnabled;
+            this.RestrictedTextLengthEnabled = pane.RestrictedTextLengthEnabled;
+            this.PerCharTransformEnabled = pane.PerCharTransformEnabled;
+
+            this.HorizontalAlignment = pane.HorizontalAlignment;
+            this.VerticalAlignment = pane.VerticalAlignment;
+        }
+
+        public TextPane Create(BflytFile bflyt)
+        {
+            var material = XmlMaterialBase.ConvertBack(bflyt, this.Material);
+
+            if (!bflyt.FontList.Contains(this.Font))
+                bflyt.FontList.Add(this.Font);
+
+            return new TextPane
+            {
+                Text = this.Text,
+                TextLength = this.TextLength,
+                MaxTextLength = this.MaxTextLength,
+                MaterialIndex = bflyt.MaterialTable.GetMaterialIndex(material),
+                FontIndex = (ushort)bflyt.FontList.IndexOf(this.Font),
+                TextAlignment = this.TextAlignment,
+                LineAlignment = this.LineAlignment,
+                ItalicTilt = this.ItalicTilt,
+                FontTopColor = this.FontTopColor.ToColor(),
+                FontBottomColor = this.FontBottomColor.ToColor(),
+                FontSize = this.FontSize.ToVector2(),
+                CharacterSpace = this.CharacterSpace,
+                LineSpace = this.LineSpace,
+                ShadowXY = this.ShadowXY.ToVector2(),
+                ShadowXYSize = this.ShadowXYSize.ToVector2(),
+                ShadowForeColor = this.ShadowForeColor.ToColor(),
+                ShadowBackColor = this.ShadowBackColor.ToColor(),
+                ShadowItalic = this.ShadowItalic,
+                TextBoxName = this.TextBoxName,
+                _flags = this._flags,
+                Unknown3 = this.Unknown3,
+                Unknown1 = this.Unknown1,
+                Unknown2 = this.Unknown2,
+                ShadowEnabled = this.ShadowEnabled,
+                RestrictedTextLengthEnabled = this.RestrictedTextLengthEnabled,
+                PerCharTransformEnabled = this.PerCharTransformEnabled,
+                HorizontalAlignment = this.HorizontalAlignment,
+                VerticalAlignment = this.VerticalAlignment
+            };
+        }
+    }
+
+    public class XmlPerCharacterTransform
+    {
+        public float CurveTimeOffset;
+        public float CurveWidth;
+        public byte LoopType;
+        public byte VerticalOrigin;
+        public byte HasAnimInfo;
+        public byte padding;
+
+        public XMLAnimationConverter.XmlAnimationSubGroup AnimationInfo;
+
+        public byte[] CharList = new byte[20];
+    }
+}

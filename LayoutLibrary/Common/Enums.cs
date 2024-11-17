@@ -90,6 +90,13 @@ namespace LayoutLibrary
         Always = 7,
     }
 
+    public enum GfxAlphaOp : byte
+    {
+        And = 0,
+        Or = 1,
+        Xor = 2,
+        Nor = 3,
+    }
     public enum TexGenType : byte
     {
         TextureCoord0 = 0,
@@ -98,7 +105,7 @@ namespace LayoutLibrary
         OrthographicProjection = 3,
         PaneBasedProjection = 4,
         PerspectiveProjection = 5,
-
+        UnknownType6 = 6,
         BrickRepeat = 7,
     }
 
@@ -151,5 +158,12 @@ namespace LayoutLibrary
         Rotate90 = 3,
         Rotate180 = 4,
         Rotate270 = 5
+    }
+
+    public enum AnimationTargetType
+    {
+        Pane = 0,
+        Material = 1,
+        User = 2,
     }
 }

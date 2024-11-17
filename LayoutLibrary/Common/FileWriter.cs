@@ -137,5 +137,20 @@ namespace LayoutLibrary
         }
 
         public void SeekBegin(long pos) => this.Seek(pos, SeekOrigin.Begin);
+
+        public void WriteStringOffsets(List<string> values)
+        {
+            //Fill empty spaces for offsets later
+            long pos = this.Position;
+            this.Write(new uint[values.Count]);
+
+            //Save offsets and strings
+            for (int i = 0; i < values.Count; i++)
+            {
+                this.WriteUint32Offset(pos + (i * 4), (int)pos);
+                this.WriteStringZeroTerminated(values[i]);
+            }
+            this.AlignBytes(4);
+        }
     }
 }

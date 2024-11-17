@@ -1,6 +1,9 @@
-﻿using System;
+﻿using LayoutLibrary.Cafe;
+using LayoutLibrary.Files;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -49,5 +52,56 @@ namespace LayoutLibrary
         /// 
         /// </summary>
         public bool IsShape { get; set; }
+
+        public PicturePane() { }
+        public PicturePane(FileReader reader, LayoutHeader header) { Read(reader, header); }
+
+        #region Read/Write
+
+        internal override void Read(FileReader reader, LayoutHeader header)
+        {
+            base.Read(reader, header);
+
+            this.ColorTopLeft = new Color(reader.ReadUInt32());
+            this.ColorTopRight = new Color(reader.ReadUInt32());
+            this.ColorBottomLeft = new Color(reader.ReadUInt32());
+            this.ColorBottomRight = new Color(reader.ReadUInt32());
+            this.MaterialIndex = reader.ReadUInt16();
+            byte numUVs = reader.ReadByte();
+            this.IsShape = reader.ReadBoolean();
+
+            this.TexCoords = new TexCoord[numUVs];
+            for (int i = 0; i < numUVs; i++)
+            {
+                this.TexCoords[i] = new TexCoord()
+                {
+                    TopLeft = reader.ReadVec2(),
+                    TopRight = reader.ReadVec2(),
+                    BottomLeft = reader.ReadVec2(),
+                    BottomRight = reader.ReadVec2(),
+                };
+            }
+        }
+
+        internal override void Write(FileWriter writer, LayoutHeader header)
+        {
+            base.Write(writer, header);
+            writer.Write(this.ColorTopLeft.ToUInt32());
+            writer.Write(this.ColorTopRight.ToUInt32());
+            writer.Write(this.ColorBottomLeft.ToUInt32());
+            writer.Write(this.ColorBottomRight.ToUInt32());
+            writer.Write((ushort)this.MaterialIndex);
+            writer.Write((byte)this.TexCoords.Length);
+            writer.Write((byte)(this.IsShape ? 1 : 0));
+            for (int i = 0; i < this.TexCoords.Length; i++)
+            {
+                writer.Write(this.TexCoords[i].TopLeft);
+                writer.Write(this.TexCoords[i].TopRight);
+                writer.Write(this.TexCoords[i].BottomLeft);
+                writer.Write(this.TexCoords[i].BottomRight);
+            }
+        }
+
+        #endregion
     }
 }

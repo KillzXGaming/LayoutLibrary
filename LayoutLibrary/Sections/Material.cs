@@ -1,7 +1,13 @@
-﻿using System;
+﻿using LayoutLibrary.Cafe;
+using LayoutLibrary.Ctr;
+using LayoutLibrary.Files;
+using LayoutLibrary.Sections.Rev;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Numerics;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,57 +22,87 @@ namespace LayoutLibrary
         /// <summary>
         /// The material list.
         /// </summary>
-        public List<Material> Materials { get; set; } = new List<Material>();
+        public List<MaterialBase> Materials { get; set; } = new List<MaterialBase>();
+
+        public ushort GetMaterialIndex(MaterialBase material)
+        {
+            var idx = Materials.FindIndex(x => x.Name == material.Name);
+            if (idx == -1)
+            {
+                idx = Materials.Count;
+                Materials.Add(material);
+            }
+
+            return (ushort)idx;
+        }
+
+        public MaterialTable() { }
+
+        public MaterialTable(FileReader reader, LayoutHeader header)
+        {
+            long pos = reader.Position - 8;
+
+            reader.SeekBegin(pos + 4);
+            uint sectionSize = reader.ReadUInt32();
+
+            ushort numMats = reader.ReadUInt16();
+            reader.Seek(2); //padding
+
+            uint[] offsets = reader.ReadUInt32s(numMats);
+            for (int i = 0; i < numMats; i++)
+            {
+                reader.SeekBegin(pos + offsets[i]);
+
+                var size = sectionSize - offsets[i];
+                if (i < numMats - 1)
+                    size = offsets[i + 1] - offsets[i];
+
+                this.Materials.Add(MaterialBase.ReadMaterial(reader, header, (int)size));
+            }
+        }
+
+        public void Write(FileWriter writer, LayoutHeader header)
+        {
+            long pos = writer.Position - 8;
+
+            writer.Write((ushort)this.Materials.Count);
+            writer.Write((ushort)0);
+
+            //offset allocate
+            writer.Write(new uint[this.Materials.Count]);
+
+            for (int i = 0; i < this.Materials.Count; i++)
+            {
+                writer.WriteUint32Offset(pos + 12 + i * 4, (int)pos);
+                this.Materials[i].WriteMaterial(writer, header);
+            }
+        }
     }
 
     /// <summary>
     /// Material for displaying and rendering layout data.
     /// </summary>
-    public class Material 
+    public class MaterialBase
     {
         /// <summary>
         /// The name of the material.
         /// </summary>
-        public string Name { get; set; }
+        public virtual string Name { get; set; }
 
-        /// <summary>
-        /// Bitflags describing the contents of the material.
-        /// </summary>
-        public MaterialBitfield Flags { get; set; }
+        internal static MaterialBase ReadMaterial(FileReader reader, LayoutHeader header, int size)
+        {
+            if (header.IsCTR)
+                return new MaterialCtr(reader, header, size);
+            if (header.IsRev)
+                return new MaterialRev(reader);
 
-        /// <summary>
-        /// The color kind in bits for each count (total of 8). 
-        /// If bit = 1, type is float.
-        /// </summary>
-        public byte ColorType { get; set; }
+            return new MaterialCafe(reader, header, size);
+        }
 
-        public List<Color> Colors { get; set; } = new List<Color>();
+        internal virtual void WriteMaterial(FileWriter writer, LayoutHeader header)
+        {
 
-        public List<MaterialTextureMap> Textures { get; set; } = new List<MaterialTextureMap>();
-        public List<MaterialTextureSrt> TextureSrts { get; set; } = new List<MaterialTextureSrt>();
-        public List<MaterialTexCoordGen> TexCoordGens { get; set; } = new List<MaterialTexCoordGen>();
-        public List<ProjectionTexGenParam> ProjectionTexGens { get; set; } = new List<ProjectionTexGenParam>();
-        public List<MaterialTextureExtension> TextureExtensions { get; set; } = new List<MaterialTextureExtension>();
-        public List<MaterialTevCombiner> TevCombiners { get; set; } = new List<MaterialTevCombiner>();
-
-        public byte[] DetailedCombinerData = new byte[0];
-        public List<MaterialDetailedCombiner> DetailedCombiners { get; set; } = new List<MaterialDetailedCombiner>();
-        public List<MaterialUserCombiner> UserCombiners { get; set; } = new List<MaterialUserCombiner>();
-        public List<AlphaCompare> AlphaCompares { get; set; } = new List<AlphaCompare>();
-
-        public BlendMode ColorBlend = new BlendMode();
-        public BlendMode AlphaBlend = new BlendMode();
-
-        public Color BlackColor => Colors.Count > 0 ? Colors[0] : Color.Black;
-        public Color WhiteColor => Colors.Count > 1 ? Colors[1] : Color.White;
-
-        public IndirectParameter IndirectParameter = new IndirectParameter();
-
-        public FontShadowParameter FontShadowParameter = new FontShadowParameter();
-
-        public List<BrickRepeatShaderInfo> BrickRepeatShaderInfos { get; set; } = new List<BrickRepeatShaderInfo>();
-
-        public byte[] Raw;
+        }
     }
 
     public class MaterialTextureSrt
@@ -97,8 +133,8 @@ namespace LayoutLibrary
 
     public class FontShadowParameter
     {
-        public Color BlackColor;
-        public Color WhiteColor;
+        public Color BlackColor = Color.Black;
+        public Color WhiteColor = Color.White;
     }
 
     public class IndirectParameter
@@ -110,30 +146,31 @@ namespace LayoutLibrary
     public class MaterialTextureMap
     {
         public ushort TextureIndex;
-        public ushort Flags;
+
+        public byte Flag1 = 0;
+        public byte Flag2 = 0;
 
         public WrapMode WrapModeU
         {
-            get => (WrapMode)BitUtils.GetBits(Flags, 0, 2);
-            set => Flags = (byte)BitUtils.SetBits(Flags, 0, 2, (byte)value);
-        }
-
-        public WrapMode WrapModeV
-        {
-            get => (WrapMode)BitUtils.GetBits(Flags, 8, 2);
-            set => Flags = (byte)BitUtils.SetBits(Flags, 8, 2, (byte)value);
+            get => (WrapMode)BitUtils.GetBits(Flag1, 0, 2);
+            set => Flag1 = (byte)BitUtils.SetBits(Flag1, (int)value, 0, 2);
         }
 
         public FilterMode MinFilterMode
         {
-            get => (FilterMode)BitUtils.GetBits(Flags, 2, 2);
-            set => Flags = (byte)BitUtils.SetBits(Flags, 2, 2, (byte)value);
+            get => (FilterMode)BitUtils.GetBits(Flag1, 2, 2);
+            set => Flag1 = (byte)BitUtils.SetBits(Flag1, (int)value, 2, 2);
         }
 
+        public WrapMode WrapModeV
+        {
+            get => (WrapMode)BitUtils.GetBits(Flag2, 0, 2);
+            set => Flag2 = (byte)BitUtils.SetBits(Flag2, (int)value, 0, 2);
+        }
         public FilterMode MagFilterMode
         {
-            get => (FilterMode)BitUtils.GetBits(Flags, 10, 2);
-            set => Flags = (byte)BitUtils.SetBits(Flags, 10, 2, (byte)value);
+            get => (FilterMode)BitUtils.GetBits(Flag2, 2, 2);
+            set => Flag2 = (byte)BitUtils.SetBits(Flag2, (int)value, 2, 2);
         }
     }
 
@@ -161,25 +198,167 @@ namespace LayoutLibrary
 
     public class MaterialTevCombiner
     {
-        public byte Data;
-        public byte Reserved0;
+        public byte ColorFlags;
+        public byte AlphaFlags;
         public byte Reserved1;
         public byte Reserved2;
     }
 
     public class MaterialDetailedCombiner
     {
-        public byte[] Data;
+        public uint Value1;
+        public uint Value2;
+
+        public Color Color1;
+        public Color Color2;
+        public Color Color3;
+        public Color Color4;
+        public Color Color5;
+
+        public List<MaterialDetailedCombinerEntry> Entries = new List<MaterialDetailedCombinerEntry>();
+    }
+
+    public class MaterialDetailedCombinerEntry
+    {
+        public TevSource[] ColorSources = new TevSource[3];
+        public TevSource[] AlphaSources = new TevSource[3];
+        public TevColorOp[] ColorOps = new TevColorOp[3];
+        public TevAlphaOp[] AlphaOps = new TevAlphaOp[3];
+
+        public TevMode ColorMode;
+        public TevScale ColorScale;
+
+        public TevMode AlphaMode;
+        public TevScale AlphaScale;
+
+        public uint Unknown1; //konst color flags?
+        public int ColorFlags;
+        public int AlphaFlags;
+        public uint Unknown2; //34
+
+        public MaterialDetailedCombinerEntry() { }
+        public MaterialDetailedCombinerEntry(FileReader reader)
+        {
+            Unknown1 = reader.ReadUInt32();
+            ColorFlags = reader.ReadInt32();
+            AlphaFlags = reader.ReadInt32();
+            Unknown2 = reader.ReadUInt32();
+
+            ColorSources[0] = (TevSource)BitUtils.GetBits(ColorFlags, 0, 4);
+            ColorSources[1] = (TevSource)BitUtils.GetBits(ColorFlags, 4, 4);
+            ColorSources[2] = (TevSource)BitUtils.GetBits(ColorFlags, 8, 4);
+            ColorOps[0] = (TevColorOp)BitUtils.GetBits(ColorFlags, 12, 4);
+            ColorOps[1] = (TevColorOp)BitUtils.GetBits(ColorFlags, 16, 4);
+            ColorOps[2] = (TevColorOp)BitUtils.GetBits(ColorFlags, 20, 4);
+            ColorMode = (TevMode)BitUtils.GetBits(ColorFlags, 24, 4);
+            ColorScale = (TevScale)BitUtils.GetBits(ColorFlags, 28, 3);
+
+            AlphaSources[0] = (TevSource)BitUtils.GetBits(AlphaFlags, 0, 4);
+            AlphaSources[1] = (TevSource)BitUtils.GetBits(AlphaFlags, 4, 4);
+            AlphaSources[2] = (TevSource)BitUtils.GetBits(AlphaFlags, 8, 4);
+            AlphaOps[0] = (TevAlphaOp)BitUtils.GetBits(AlphaFlags, 12, 4);
+            AlphaOps[1] = (TevAlphaOp)BitUtils.GetBits(AlphaFlags, 16, 4);
+            AlphaOps[2] = (TevAlphaOp)BitUtils.GetBits(AlphaFlags, 20, 4);
+            AlphaMode = (TevMode)BitUtils.GetBits(AlphaFlags, 24, 4);
+            AlphaScale = (TevScale)BitUtils.GetBits(AlphaFlags, 28, 3);
+        }
+
+        public void Write(FileWriter writer)
+        {
+            writer.Write(Unknown1);
+            writer.Write(ColorFlags);
+            writer.Write(AlphaFlags);
+            writer.Write(Unknown2);
+        }
+
+        public enum TevSource : byte
+        {
+            Primary = 0,
+            Texture0 = 3,
+            Texture1 = 4,
+            Texture2 = 5,
+            Constant = 14,
+            Previous = 15,
+        }
+
+        public enum TevScale
+        {
+            Scale1,
+            Scale2,
+            Scale4
+        }
+
+        public enum TevMode : byte
+        {
+            Replace,
+            Modulate,
+            Add,
+            AddSigned,
+            Interpolate,
+            Subtract,
+            AddMultiplicate,
+            MultiplcateAdd,
+            Overlay,
+            Indirect,
+            BlendIndirect,
+            EachIndirect,
+        }
+
+        public enum TevColorOp
+        {
+            RGB = 0,
+            InvRGB = 1,
+            Alpha = 2,
+            InvAlpha = 3,
+            RRR = 4,
+            InvRRR = 5,
+            GGG = 6,
+            InvGGG = 7,
+            BBB = 8,
+            InvBBB = 9
+        }
+        public enum TevAlphaOp
+        {
+            Alpha = 0,
+            InvAlpha = 1,
+            R = 2,
+            InvR = 3,
+            G = 4,
+            InvG = 5,
+            B = 6,
+            InvB = 7
+        }
     }
 
     public class MaterialUserCombiner
     {
-        public byte[] Data;
+        public string Name; //fixed string 0x60
+
+        public Color Color1;
+        public Color Color2;
+        public Color Color3;
+        public Color Color4;
+        public Color Color5;
     }
 
     public class BrickRepeatShaderInfo
     {
-        public byte[] Data;
+        public Vector2 Scale1;
+        public Vector2 Offset1;
+
+        public Vector2 Scale2;
+        public Vector2 Offset2;
+
+        public Vector4 Unknown1;
+        public Vector2 Unknown2;
+
+        public Vector2 RotationRange = new Vector2(-180, 180);
+
+        public Vector2 Unknown3;
+        public Vector4 Unknown4;
+
+
+        public float[] Data;
     }
 
     public class AlphaCompare
@@ -200,7 +379,7 @@ namespace LayoutLibrary
     {
         private uint _data;
 
-        public uint GetFlags() => _data;
+        public uint ToUInt32() => _data;
 
         public byte TexMapCount
         {
@@ -256,10 +435,10 @@ namespace LayoutLibrary
             set => SetBits(13, 1, value);
         }
 
-        public bool EnableIndirectParams
+        public byte IndirectSrtCount
         {
-            get => GetBits(14, 1) != 0;
-            set => SetBits(14, 1, value ? 1u : 0u);
+            get => GetBits(14, 1);
+            set => SetBits(14, 1, value);
         }
 
         public byte ProjectionTexGenCount

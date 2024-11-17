@@ -31,6 +31,15 @@ namespace LayoutLibrary
                 ByteOrder = ByteOrder.LittleEndian;
         }
 
+        public string ReadSignature()
+        {
+            string signature = ReadString(4, Encoding.ASCII);
+            if (ReverseMagic)
+                signature = new string(signature.Reverse().ToArray());
+
+            return signature;
+        }
+
         public string ReadSignature(string expected_magic)
         {
             string signature = ReadString(expected_magic.Length, Encoding.ASCII);
@@ -51,6 +60,20 @@ namespace LayoutLibrary
                 ByteOrder = ByteOrder.BigEndian;
             else
                 ByteOrder = ByteOrder.LittleEndian;
+        }
+
+        public List<string> ReadStringOffsets(int count)
+        {
+            List<string> values = new List<string>();
+
+            long pos = this.Position;
+            uint[] offsets = this.ReadUInt32s(count);
+            for (int i = 0; i < offsets.Length; i++)
+            {
+                this.SeekBegin(offsets[i] + pos);
+                values.Add(this.ReadZeroTerminatedString());
+            }
+            return values;
         }
     }
 }

@@ -1,7 +1,9 @@
-﻿using System;
+﻿using LayoutLibrary.Files;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -104,7 +106,7 @@ namespace LayoutLibrary
         /// <summary>
         /// User data string.
         /// </summary>
-        public string UserDataInfo { get; set; }
+        public string UserDataInfo { get; set; } = "";
 
         /// <summary>
         /// Pane flags.
@@ -145,5 +147,134 @@ namespace LayoutLibrary
         /// Pane user data.
         /// </summary>
         public UserData UserData { get; set; }
+
+        public Pane() { }
+
+        public Pane(FileReader reader, LayoutHeader header) { Read(reader, header); }
+
+        #region Read/Write
+
+        internal virtual void Read(FileReader reader, LayoutHeader header)
+        {
+            if (header.IsCTR || header.IsRev)
+                ReaCtrRev(reader);
+            else
+                ReadCafe(reader);
+        }
+
+        internal virtual void Write(FileWriter writer, LayoutHeader header)
+        {
+            if (header.IsCTR || header.IsRev)
+                WriteCtrRev(writer);
+            else
+                WriteCafe(writer);
+        }
+
+        internal void ReaCtrRev(FileReader reader)
+        {
+            this.Flags1 = reader.ReadByte();
+            byte origin = reader.ReadByte();
+            this.Alpha = reader.ReadByte();
+            this.PaneMagFlags = reader.ReadByte();
+            this.Name = reader.ReadFixedString(0x10);
+            this.UserDataInfo = reader.ReadFixedString(0x8);
+            this.Translate = reader.ReadVec3();
+            this.Rotate = reader.ReadVec3();
+            this.Scale = reader.ReadVec2();
+            this.Width = reader.ReadSingle();
+            this.Height = reader.ReadSingle();
+
+            switch ((origin % 3))
+            {
+                case 0: this.OriginX = OriginX.Left; break;
+                case 1: this.OriginX = OriginX.Center; break;
+                case 2: this.OriginX = OriginX.Right; break;
+            }
+
+            switch ((origin / 3))
+            {
+                case 0: this.OriginY = OriginY.Top; break;
+                case 1: this.OriginY = OriginY.Center; break;
+                case 2: this.OriginY = OriginY.Bottom; break;
+            }
+        }
+
+        internal void ReadCafe(FileReader reader)
+        {
+            this.Flags1 = reader.ReadByte();
+            byte origin = reader.ReadByte();
+            this.Alpha = reader.ReadByte();
+            this.PaneMagFlags = reader.ReadByte();
+            this.Name = reader.ReadFixedString(0x18);
+            this.UserDataInfo = reader.ReadFixedString(0x8);
+            this.Translate = reader.ReadVec3();
+            this.Rotate = reader.ReadVec3();
+            this.Scale = reader.ReadVec2();
+            this.Width = reader.ReadSingle();
+            this.Height = reader.ReadSingle();
+
+            int mainorigin = origin % 16;
+            int parentorigin = origin / 16;
+
+            this.OriginX = (OriginX)(mainorigin % 4);
+            this.OriginY = (OriginY)(mainorigin / 4);
+            this.ParentOriginX = (OriginX)(parentorigin % 4);
+            this.ParentOriginY = (OriginY)(parentorigin / 4);
+        }
+
+        internal void WriteCtrRev(FileWriter writer)
+        {
+            byte originL = 0;
+            byte originH = 0;
+
+            switch (this.OriginX)
+            {
+                case OriginX.Left: originL = 0; break;
+                case OriginX.Center: originL = 1; break;
+                case OriginX.Right: originL = 2; break;
+            }
+            switch (this.OriginY)
+            {
+                case OriginY.Top: originH = 0; break;
+                case OriginY.Center: originH = 1; break;
+                case OriginY.Bottom: originH = 2; break;
+            }
+
+            writer.Write(this.Flags1);
+            writer.Write((byte)(((int)originL) + ((int)originH * 3)));
+            writer.Write(this.Alpha);
+            writer.Write(this.PaneMagFlags);
+            writer.WriteFixedString(this.Name, 0x10);
+            writer.WriteFixedString(this.UserDataInfo, 0x8);
+            writer.Write(this.Translate);
+            writer.Write(this.Rotate);
+            writer.Write(this.Scale);
+            writer.Write(this.Width);
+            writer.Write(this.Height);
+        }
+
+        internal void WriteCafe(FileWriter writer)
+        {
+            int originL = (int)this.OriginX;
+            int originH = (int)this.OriginY * 4;
+            int originPL = (int)this.ParentOriginX;
+            int originPH = (int)this.ParentOriginY * 4;
+            byte parentOrigin = (byte)((originPL + originPH) * 16);
+            byte origin = (byte)(originL + originH + parentOrigin);
+
+            writer.Write(this.Flags1);
+            writer.Write(origin);
+            writer.Write(this.Alpha);
+            writer.Write(this.PaneMagFlags);
+            writer.WriteFixedString(this.Name, 0x18);
+            writer.WriteFixedString(this.UserDataInfo, 0x8);
+            writer.Write(this.Translate);
+            writer.Write(this.Rotate);
+            writer.Write(this.Scale);
+            writer.Write(this.Width);
+            writer.Write(this.Height);
+        }
+
+        #endregion
     }
 }
