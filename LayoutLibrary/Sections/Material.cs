@@ -89,6 +89,8 @@ namespace LayoutLibrary
         /// </summary>
         public virtual string Name { get; set; }
 
+        public int Index { get; set; }
+
         internal static MaterialBase ReadMaterial(FileReader reader, LayoutHeader header, int size)
         {
             if (header.IsCTR)
@@ -235,7 +237,7 @@ namespace LayoutLibrary
         public int ColorFlags;
         public int AlphaFlags;
         public uint Unknown2; //34
-        public uint Unknown3; //0
+        public uint Unknown3;
 
         public MaterialDetailedCombinerEntry() { }
         public MaterialDetailedCombinerEntry(FileReader reader)
@@ -244,6 +246,7 @@ namespace LayoutLibrary
             ColorFlags = reader.ReadInt32();
             AlphaFlags = reader.ReadInt32();
             Unknown2 = reader.ReadUInt32();
+            Unknown3 = reader.ReadUInt32();
 
             ColorSources[0] = (TevSource)BitUtils.GetBits(ColorFlags, 0, 4);
             ColorSources[1] = (TevSource)BitUtils.GetBits(ColorFlags, 4, 4);
@@ -270,6 +273,7 @@ namespace LayoutLibrary
             writer.Write(ColorFlags);
             writer.Write(AlphaFlags);
             writer.Write(Unknown2);
+            writer.Write(Unknown3);
         }
 
         public enum TevSource : byte

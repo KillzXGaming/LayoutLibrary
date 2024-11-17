@@ -77,7 +77,7 @@ namespace LayoutLibrary.XmlConverter
             else if (pane is WindowPane) this.Content = new XmlWindowPane((WindowPane)pane, bflyt);
             else if (pane is TextPane) this.Content = new XmlTextPane((TextPane)pane, bflyt);
             else if (pane is PartsPane) this.Content = new XmlPartPane((PartsPane)pane, bflyt);
-            else if (pane is AlignmentPane) this.Content = new XmlAlignmentPane();
+            else if (pane is AlignmentPane) this.Content = new XmlAlignmentPane((AlignmentPane)pane);
             else if (pane is ScissorPane) this.Content = new XmlScissorPane();
             else if (pane is BoundsPane) this.Content = new XmlBoundsPane();
 
@@ -166,13 +166,16 @@ namespace LayoutLibrary.XmlConverter
     }
     public class XmlAlignmentPane : XmlPaneContent
     {
+        public XmlVector3 Alignment;
+
         public XmlAlignmentPane() { }
+        public XmlAlignmentPane(AlignmentPane v) { this.Alignment = new XmlVector3(v.AlignmentValue); }
 
         public AlignmentPane Create()
         {
             return new AlignmentPane()
             {
-
+                AlignmentValue = Alignment.ToVector3(),
             };
         }
     }

@@ -85,13 +85,16 @@ namespace LayoutLibrary.XmlConverter
 
             this.HorizontalAlignment = pane.HorizontalAlignment;
             this.VerticalAlignment = pane.VerticalAlignment;
+
+            if (pane.PerCharacterTransform != null )
+                this.PerCharacterTransform = new XmlPerCharacterTransform(pane.PerCharacterTransform);
         }
 
         public TextPane Create(BflytFile bflyt)
         {
             var material = XmlMaterialBase.ConvertBack(bflyt, this.Material);
 
-            if (!bflyt.FontList.Contains(this.Font))
+            if (!string.IsNullOrEmpty(this.Font) && !bflyt.FontList.Contains(this.Font))
                 bflyt.FontList.Add(this.Font);
 
             return new TextPane
@@ -99,7 +102,7 @@ namespace LayoutLibrary.XmlConverter
                 Text = this.Text,
                 TextLength = this.TextLength,
                 MaxTextLength = this.MaxTextLength,
-                MaterialIndex = bflyt.MaterialTable.GetMaterialIndex(material),
+                MaterialIndex =  bflyt.MaterialTable.GetMaterialIndex(material),
                 FontIndex = (ushort)bflyt.FontList.IndexOf(this.Font),
                 TextAlignment = this.TextAlignment,
                 LineAlignment = this.LineAlignment,
@@ -123,7 +126,8 @@ namespace LayoutLibrary.XmlConverter
                 RestrictedTextLengthEnabled = this.RestrictedTextLengthEnabled,
                 PerCharTransformEnabled = this.PerCharTransformEnabled,
                 HorizontalAlignment = this.HorizontalAlignment,
-                VerticalAlignment = this.VerticalAlignment
+                VerticalAlignment = this.VerticalAlignment,
+                PerCharacterTransform = this.PerCharacterTransform == null ? null : this.PerCharacterTransform.Create(),
             };
         }
     }
@@ -140,5 +144,34 @@ namespace LayoutLibrary.XmlConverter
         public XMLAnimationConverter.XmlAnimationSubGroup AnimationInfo;
 
         public byte[] CharList = new byte[20];
+
+        public XmlPerCharacterTransform() { }
+        public XmlPerCharacterTransform(PerCharacterTransform perCharacter)
+        {
+            this.CurveTimeOffset = perCharacter.CurveTimeOffset;
+            this.CurveWidth = perCharacter.CurveWidth;
+            this.LoopType = perCharacter.LoopType;
+            this.VerticalOrigin = perCharacter.VerticalOrigin;
+            this.HasAnimInfo = perCharacter.HasAnimInfo;
+            this.padding = perCharacter.padding;
+            this.CharList = perCharacter.CharList;
+            if (perCharacter.AnimationInfo != null)
+                this.AnimationInfo = XMLAnimationConverter.ConvertSubGroup(perCharacter.AnimationInfo);
+        }
+
+        public PerCharacterTransform Create()
+        {
+            return new PerCharacterTransform()
+            {
+                CurveWidth = this.CurveWidth, 
+                HasAnimInfo = this.HasAnimInfo,
+                CharList = this.CharList,
+                CurveTimeOffset = this.CurveTimeOffset,
+                LoopType = this.LoopType,
+                padding = this.padding,
+                VerticalOrigin = this.VerticalOrigin,
+                AnimationInfo = AnimationInfo == null ? null : XMLAnimationConverter.ConvertXmlSubGroup(this.AnimationInfo)
+            };
+        }
     }
 }

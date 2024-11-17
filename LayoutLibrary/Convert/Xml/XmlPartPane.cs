@@ -48,7 +48,7 @@ namespace LayoutLibrary.XmlConverter
                 {
                     BasicInfo = info,
                     BasicUsageFlag = prop.BasicUsageFlag,
-                    UsageFlag = prop.BasicUsageFlag,
+                    UsageFlag = prop.UsageFlag,
                     Flag1 = prop.Flag1,
                     MaterialUsageFlag = prop.MaterialUsageFlag,
                     Name = prop.Name,

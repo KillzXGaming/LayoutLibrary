@@ -35,6 +35,7 @@ namespace LayoutLibrary.XmlConverter
         public List<BrickRepeatShaderInfo> BrickRepeatShaderInfos = new List<BrickRepeatShaderInfo>();
 
         public bool UseTextureOnly = false;
+        public bool AlphaInterpolation = false;
 
         public XmlMaterialCafe() { }
         public XmlMaterialCafe(MaterialCafe material, BflytFile bflyt, ushort index)
@@ -47,6 +48,7 @@ namespace LayoutLibrary.XmlConverter
                 this.Colors.Add(new XmlColor(clr));
 
             this.UseTextureOnly = material.Flags.UseTextureOnly;
+            this.AlphaInterpolation = material.Flags.AlphaInterpolation != 0;
 
             foreach (var tex in material.Textures)
                 this.Textures.Add(new XmlMaterialTextureMap(tex, bflyt));
@@ -90,6 +92,7 @@ namespace LayoutLibrary.XmlConverter
                         AlphaFlags = entry.AlphaFlags,
                         Unknown1 = entry.Unknown1,
                         Unknown2 = entry.Unknown2,
+                        Unknown3 = entry.Unknown3,
                     });
             }
 
@@ -132,10 +135,12 @@ namespace LayoutLibrary.XmlConverter
         {
             MaterialCafe mat = new MaterialCafe();
             mat.Name = this.Name;
+            mat.Index = this.Index;
             mat.ColorType = this.ColorType;
             foreach (var clr in this.Colors)
                 mat.Colors.Add(clr.ToColor());
             mat.Flags.UseTextureOnly = this.UseTextureOnly;
+            mat.Flags.AlphaInterpolation = (byte)(this.AlphaInterpolation ? 1 : 0);
 
             foreach (var tex in this.Textures)
             {
@@ -208,6 +213,7 @@ namespace LayoutLibrary.XmlConverter
                         AlphaFlags = entry.AlphaFlags,
                         Unknown1 = entry.Unknown1,
                         Unknown2 = entry.Unknown2,
+                        Unknown3 = entry.Unknown3,
                     });
             }
 
@@ -466,6 +472,7 @@ namespace LayoutLibrary.XmlConverter
         public int ColorFlags;
         public int AlphaFlags;
         public uint Unknown2;
+        public uint Unknown3;
     }
 
 }

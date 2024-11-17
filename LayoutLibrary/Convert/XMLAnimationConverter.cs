@@ -56,49 +56,7 @@ namespace LayoutLibrary.XmlConverter
                     header.AnimationInfo.Groups.Add(xmlAnimGroup);
 
                     foreach (var t in g.Tags)
-                    {
-                        XmlAnimationSubGroup xmlAnimSubGroup = new XmlAnimationSubGroup();
-                        xmlAnimSubGroup.Kind = t.Kind.Remove(0, 1); //type without first char
-                        xmlAnimGroup.SubGroups.Add(xmlAnimSubGroup);
-
-                        Dictionary<int, string> target_types = new Dictionary<int, string>();
-
-                        if (AnimationInfoSubGroup.TypeEnumDefine.ContainsKey(t.Kind))
-                        {
-                            var targetEnum = AnimationInfoSubGroup.TypeEnumDefine[t.Kind];
-                            foreach (int  v in Enum.GetValues(targetEnum).Cast<byte>())
-                                target_types.Add(v, Enum.GetName(targetEnum, v) );
-                        }
-                        if (AnimationInfoSubGroup.TypeDefine.ContainsKey(xmlAnimSubGroup.Kind))
-                        {
-                            var targetName = AnimationInfoSubGroup.TypeDefine[xmlAnimSubGroup.Kind];
-                            xmlAnimSubGroup.Kind = targetName;
-                        }
-
-                        foreach (var track in t.Targets)
-                        {
-                            XmlAnimationTrack xmlTrack = new XmlAnimationTrack();
-                            xmlTrack.CurveType = track.CurveType.ToString();
-                            xmlTrack.Index = track.Index;
-                            xmlTrack.Target = track.Target.ToString();
-                            xmlAnimSubGroup.Tracks.Add(xmlTrack);
-
-                            if (target_types.ContainsKey(track.Target))
-                            {
-                                xmlTrack.Target = target_types[track.Target];
-                            }
-
-                            foreach (var key in track.KeyFrames)
-                            {
-                                xmlTrack.Tracks.Add(new XmlKeyFrame()
-                                {
-                                    Frame = key.Frame,
-                                    Value = key.Value,
-                                    Slope = key.Slope,
-                                }); 
-                            }
-                        }
-                    }
+                        xmlAnimGroup.SubGroups.Add(ConvertSubGroup(t));
                 }
             }
 
@@ -109,6 +67,51 @@ namespace LayoutLibrary.XmlConverter
                 writer.Flush();
                 return writer.ToString();
             }
+        }
+
+        public static XmlAnimationSubGroup ConvertSubGroup(AnimationInfoSubGroup t)
+        {
+            XmlAnimationSubGroup xmlAnimSubGroup = new XmlAnimationSubGroup();
+            xmlAnimSubGroup.Kind = t.Kind.Remove(0, 1); //type without first char
+
+            Dictionary<int, string> target_types = new Dictionary<int, string>();
+
+            if (AnimationInfoSubGroup.TypeEnumDefine.ContainsKey(t.Kind))
+            {
+                var targetEnum = AnimationInfoSubGroup.TypeEnumDefine[t.Kind];
+                foreach (int v in Enum.GetValues(targetEnum).Cast<byte>())
+                    target_types.Add(v, Enum.GetName(targetEnum, v));
+            }
+            if (AnimationInfoSubGroup.TypeDefine.ContainsKey(xmlAnimSubGroup.Kind))
+            {
+                var targetName = AnimationInfoSubGroup.TypeDefine[xmlAnimSubGroup.Kind];
+                xmlAnimSubGroup.Kind = targetName;
+            }
+
+            foreach (var track in t.Targets)
+            {
+                XmlAnimationTrack xmlTrack = new XmlAnimationTrack();
+                xmlTrack.CurveType = track.CurveType.ToString();
+                xmlTrack.Index = track.Index;
+                xmlTrack.Target = track.Target.ToString();
+                xmlAnimSubGroup.Tracks.Add(xmlTrack);
+
+                if (target_types.ContainsKey(track.Target))
+                {
+                    xmlTrack.Target = target_types[track.Target];
+                }
+
+                foreach (var key in track.KeyFrames)
+                {
+                    xmlTrack.Tracks.Add(new XmlKeyFrame()
+                    {
+                        Frame = key.Frame,
+                        Value = key.Value,
+                        Slope = key.Slope,
+                    });
+                }
+            }
+            return xmlAnimSubGroup;
         }
 
         public static BflanFile FromXml(string xmlString)
@@ -154,65 +157,67 @@ namespace LayoutLibrary.XmlConverter
                     };
 
                     foreach (var xmlSubGroup in xmlGroup.SubGroups)
-                    {
-                        AnimationInfoSubGroup subGroup = new AnimationInfoSubGroup
-                        {
-                            Kind = xmlSubGroup.Kind
-                        };
-
-                        if (AnimationInfoSubGroup.TypeDefine.ContainsValue(xmlSubGroup.Kind))
-                        {
-                            subGroup.Kind = AnimationInfoSubGroup.TypeDefine.FirstOrDefault(x =>
-                            x.Value == xmlSubGroup.Kind).Key;
-                        }
-
-                        //Set magic start
-                        switch (bflan.Magic)
-                        {
-                            case "RLAN": subGroup.Kind = $"R{subGroup.Kind}"; break;
-                            case "CLAN": subGroup.Kind = $"C{subGroup.Kind}"; break;
-                            case "FLAN": subGroup.Kind = $"F{subGroup.Kind}"; break;
-                        }
-
-                        Dictionary<string, byte> targetTypes = new Dictionary<string, byte>();
-
-                        if (AnimationInfoSubGroup.TypeEnumDefine.ContainsKey(subGroup.Kind))
-                        {
-                            var targetEnum = AnimationInfoSubGroup.TypeEnumDefine[subGroup.Kind];
-                           targetTypes = Enum.GetValues(targetEnum).Cast<byte>().ToDictionary(v => Enum.GetName(targetEnum, v), v => v);
-                        }
-
-                        foreach (var xmlTrack in xmlSubGroup.Tracks)
-                        {
-                            AnimationTarget track = new AnimationTarget
-                            {
-                                CurveType = (AnimCurveType)Enum.Parse(typeof(AnimCurveType), xmlTrack.CurveType),
-                                Index = xmlTrack.Index,
-                                Target = targetTypes.ContainsKey(xmlTrack.Target)
-                                         ? (byte)targetTypes[xmlTrack.Target]
-                                         : byte.Parse(xmlTrack.Target)
-                            };
-
-                            foreach (var xmlKeyFrame in xmlTrack.Tracks)
-                            {
-                                track.KeyFrames.Add(new KeyFrame
-                                {
-                                    Frame = xmlKeyFrame.Frame,
-                                    Value = xmlKeyFrame.Value,
-                                    Slope = xmlKeyFrame.Slope
-                                });
-                            }
-                            subGroup.Targets.Add(track);
-                        }
-
-                        group.Tags.Add(subGroup);
-                    }
+                        group.Tags.Add(ConvertXmlSubGroup(xmlSubGroup, header.Header.Magic));
 
                     bflan.AnimationInfo.Entries.Add(group);
                 }
             }
 
             return bflan;
+        }
+
+        public static AnimationInfoSubGroup ConvertXmlSubGroup(XmlAnimationSubGroup xmlSubGroup, string version = "FLAN")
+        {
+            AnimationInfoSubGroup subGroup = new AnimationInfoSubGroup
+            {
+                Kind = xmlSubGroup.Kind
+            };
+
+            if (AnimationInfoSubGroup.TypeDefine.ContainsValue(xmlSubGroup.Kind))
+            {
+                subGroup.Kind = AnimationInfoSubGroup.TypeDefine.FirstOrDefault(x =>
+                x.Value == xmlSubGroup.Kind).Key;
+            }
+
+            //Set magic start
+            switch (version)
+            {
+                case "RLAN": subGroup.Kind = $"R{subGroup.Kind}"; break;
+                case "CLAN": subGroup.Kind = $"C{subGroup.Kind}"; break;
+                case "FLAN": subGroup.Kind = $"F{subGroup.Kind}"; break;
+            }
+
+            Dictionary<string, byte> targetTypes = new Dictionary<string, byte>();
+
+            if (AnimationInfoSubGroup.TypeEnumDefine.ContainsKey(subGroup.Kind))
+            {
+                var targetEnum = AnimationInfoSubGroup.TypeEnumDefine[subGroup.Kind];
+                targetTypes = Enum.GetValues(targetEnum).Cast<byte>().ToDictionary(v => Enum.GetName(targetEnum, v), v => v);
+            }
+
+            foreach (var xmlTrack in xmlSubGroup.Tracks)
+            {
+                AnimationTarget track = new AnimationTarget
+                {
+                    CurveType = (AnimCurveType)Enum.Parse(typeof(AnimCurveType), xmlTrack.CurveType),
+                    Index = xmlTrack.Index,
+                    Target = targetTypes.ContainsKey(xmlTrack.Target)
+                             ? (byte)targetTypes[xmlTrack.Target]
+                             : byte.Parse(xmlTrack.Target)
+                };
+
+                foreach (var xmlKeyFrame in xmlTrack.Tracks)
+                {
+                    track.KeyFrames.Add(new KeyFrame
+                    {
+                        Frame = xmlKeyFrame.Frame,
+                        Value = xmlKeyFrame.Value,
+                        Slope = xmlKeyFrame.Slope
+                    });
+                }
+                subGroup.Targets.Add(track);
+            }
+            return subGroup;
         }
 
         private static T Deserialize<T>(string xmlString)
