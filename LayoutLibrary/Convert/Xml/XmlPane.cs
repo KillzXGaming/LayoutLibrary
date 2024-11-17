@@ -28,6 +28,9 @@ namespace LayoutLibrary.XmlConverter
         public OriginPlacement ParentOrigin;
 
         [XmlAttribute()]
+        public bool Visible;
+
+        [XmlAttribute()]
         public byte Alpha;
 
         [XmlAttribute()]
@@ -67,6 +70,7 @@ namespace LayoutLibrary.XmlConverter
             this.PaneMagFlags = pane.PaneMagFlags;
             this.UserDataInfo = pane.UserDataInfo;
             this.Flags1 = pane.Flags1;
+            this.Visible = pane.Visible;
 
             this.Children = new XmlPane[pane.Children.Count];
             for (int i = 0; i < pane.Children.Count; i++)
@@ -139,6 +143,7 @@ namespace LayoutLibrary.XmlConverter
             pane.Name = this.Name;
             pane.PaneMagFlags = this.PaneMagFlags;
             pane.UserDataInfo = this.UserDataInfo;
+            pane.Visible = this.Visible;
 
             if (this.UserData != null)
                 pane.UserData = this.UserData.Create();
