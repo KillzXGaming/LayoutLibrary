@@ -72,8 +72,12 @@ namespace LayoutLibrary.XmlConverter
             this.LineSpace = pane.LineSpace;
             this.ShadowXY = new XmlVector2(pane.ShadowXY);
             this.ShadowXYSize = new XmlVector2(pane.ShadowXYSize);
-            this.ShadowForeColor = new XmlColor(pane.ShadowForeColor);
-            this.ShadowBackColor = new XmlColor(pane.ShadowBackColor);
+
+            if (pane.ShadowForeColor  != null) 
+                this.ShadowForeColor = new XmlColor(pane.ShadowForeColor);
+            if (pane.ShadowBackColor != null)
+                this.ShadowBackColor = new XmlColor(pane.ShadowBackColor);
+
             this.ShadowItalic = pane.ShadowItalic;
             this.TextBoxName = pane.TextBoxName;
 
@@ -117,8 +121,8 @@ namespace LayoutLibrary.XmlConverter
                 LineSpace = this.LineSpace,
                 ShadowXY = this.ShadowXY.ToVector2(),
                 ShadowXYSize = this.ShadowXYSize.ToVector2(),
-                ShadowForeColor = this.ShadowForeColor.ToColor(),
-                ShadowBackColor = this.ShadowBackColor.ToColor(),
+                ShadowForeColor = this.ShadowForeColor == null ? null : this.ShadowForeColor.ToColor(),
+                ShadowBackColor = this.ShadowBackColor == null ? null : this.ShadowBackColor.ToColor(),
                 ShadowItalic = this.ShadowItalic,
                 TextBoxName = this.TextBoxName,
                 _flags = this._flags,
