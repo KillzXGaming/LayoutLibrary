@@ -139,6 +139,7 @@ namespace LayoutLibrary.XmlConverter
         public XmlColor ColorBottomRight;
 
         [XmlElement("Material", typeof(XmlMaterialCafe))]
+        [XmlElement("MaterialCtr", typeof(XmlMaterialCtr))]
         public XmlMaterialBase Material;
     }
 
@@ -147,6 +148,7 @@ namespace LayoutLibrary.XmlConverter
         public WindowFrameTexFlip TextureFlip;
 
         [XmlElement("Material", typeof(XmlMaterialCafe))]
+        [XmlElement("MaterialCtr", typeof(XmlMaterialCtr))]
         public XmlMaterialBase Material;
     }
 }

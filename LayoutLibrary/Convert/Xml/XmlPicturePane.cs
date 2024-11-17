@@ -24,6 +24,7 @@ namespace LayoutLibrary.XmlConverter
         public bool IsShape;
 
         [XmlElement("Material", typeof(XmlMaterialCafe))]
+        [XmlElement("MaterialCtr", typeof(XmlMaterialCtr))]
         public XmlMaterialBase Material;
 
         public XmlPicturePane() { }

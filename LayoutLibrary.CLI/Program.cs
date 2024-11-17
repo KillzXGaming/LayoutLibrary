@@ -9,6 +9,8 @@ namespace MetaphorMessageConverter
     {
         public static void Main(string[] args)
         {
+            args = new string[] { "mch_ch_mii_02.bclyt" };
+
             if (args.Length == 0 || args.Contains("-h"))
             {
                 Console.WriteLine($"Tool by KillzXGaming");
