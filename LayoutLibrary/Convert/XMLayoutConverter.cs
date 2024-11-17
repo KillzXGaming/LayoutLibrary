@@ -44,6 +44,7 @@ namespace LayoutLibrary.XmlConverter
             header.FontList = bflyt.FontList;
             header.Root = new XmlPane(bflyt.Root, bflyt);
             header.RootGroup = new XmlGroup(bflyt.RootGroup);
+            header.CaptureTextureLayer = bflyt.CaptureTextureLayer;
 
             if (bflyt.ControlSource != null)
                 header.ControlSource = new XmlControlSource(bflyt.ControlSource);
@@ -72,6 +73,7 @@ namespace LayoutLibrary.XmlConverter
             bflyt.VersionMicro = header.Header.VersionMicro;
             bflyt.TextureList = header.TextureList;
             bflyt.FontList = header.FontList;
+            bflyt.CaptureTextureLayer = header.CaptureTextureLayer;
 
             if (header.ControlSource != null)
                 bflyt.ControlSource = header.ControlSource.Create();
@@ -159,6 +161,9 @@ namespace LayoutLibrary.XmlConverter
 
             [XmlElement]
             public XmlControlSource ControlSource;
+
+            [XmlElement]
+            public CaptureTextureLayer CaptureTextureLayer;
         }
 
         public class XmlLayout
