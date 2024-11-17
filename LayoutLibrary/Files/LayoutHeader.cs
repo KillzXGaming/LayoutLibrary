@@ -277,7 +277,7 @@ namespace LayoutLibrary.Files
                 pane.Write(writer, this);
         }
     }
-    class UnsupportedSection
+    public class UnsupportedSection
     {
         public string Magic;
         public byte[] Data;

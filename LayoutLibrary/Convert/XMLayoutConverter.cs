@@ -45,6 +45,8 @@ namespace LayoutLibrary.XmlConverter
             header.Root = new XmlPane(bflyt.Root, bflyt);
             header.RootGroup = new XmlGroup(bflyt.RootGroup);
             header.CaptureTextureLayer = bflyt.CaptureTextureLayer;
+            if (bflyt.UnsupportedSections?.Count > 0)
+                header.UnsupportedSections = bflyt.UnsupportedSections;
 
             if (bflyt.ControlSource != null)
                 header.ControlSource = new XmlControlSource(bflyt.ControlSource);
@@ -74,6 +76,8 @@ namespace LayoutLibrary.XmlConverter
             bflyt.TextureList = header.TextureList;
             bflyt.FontList = header.FontList;
             bflyt.CaptureTextureLayer = header.CaptureTextureLayer;
+            if (header.UnsupportedSections != null)
+                bflyt.UnsupportedSections = header.UnsupportedSections;
 
             if (header.ControlSource != null)
                 bflyt.ControlSource = header.ControlSource.Create();
@@ -166,6 +170,8 @@ namespace LayoutLibrary.XmlConverter
 
             [XmlElement]
             public CaptureTextureLayer CaptureTextureLayer;
+
+            public List<UnsupportedSection> UnsupportedSections;
         }
 
         public class XmlLayout
