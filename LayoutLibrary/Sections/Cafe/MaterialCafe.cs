@@ -363,6 +363,7 @@ namespace LayoutLibrary
                     writer.Write(mat.MaterialDetailedCombiner.Entries[i].ColorFlags);
                     writer.Write(mat.MaterialDetailedCombiner.Entries[i].AlphaFlags);
                     writer.Write(mat.MaterialDetailedCombiner.Entries[i].Unknown2);
+                    writer.Write(mat.MaterialDetailedCombiner.Entries[i].Unknown3);
                 }
             }
             else
@@ -434,7 +435,11 @@ namespace LayoutLibrary
                 writer.Write(mat.BrickRepeatShaderInfos[i].Offset1);
                 writer.Write(mat.BrickRepeatShaderInfos[i].Scale2);
                 writer.Write(mat.BrickRepeatShaderInfos[i].Offset2);
-                writer.Write(mat.BrickRepeatShaderInfos[i].Data);
+                writer.Write(mat.BrickRepeatShaderInfos[i].Unknown1);
+                writer.Write(mat.BrickRepeatShaderInfos[i].Unknown2);
+                writer.Write(mat.BrickRepeatShaderInfos[i].RotationRange);
+                writer.Write(mat.BrickRepeatShaderInfos[i].Unknown3);
+                writer.Write(mat.BrickRepeatShaderInfos[i].Unknown4);
             }
         }
     }

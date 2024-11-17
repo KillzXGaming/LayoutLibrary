@@ -235,6 +235,7 @@ namespace LayoutLibrary
         public int ColorFlags;
         public int AlphaFlags;
         public uint Unknown2; //34
+        public uint Unknown3; //0
 
         public MaterialDetailedCombinerEntry() { }
         public MaterialDetailedCombinerEntry(FileReader reader)
