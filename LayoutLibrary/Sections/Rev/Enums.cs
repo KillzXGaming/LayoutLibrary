@@ -9,7 +9,7 @@ namespace LayoutLibrary.Revolution
 
     //Thanks brawlbox. Layouts should work with these
     //https://github.com/libertyernie/brawltools/blob/40d7431b1a01ef4a0411cd69e51411bd581e93e2/BrawlLib/Wii/Graphics/Enum.cs
-    public enum ColorArg : byte
+    public enum GXColorArg : byte
     {
         OutputColor,//GX_CC_CPREV,
         OutputAlpha,//GX_CC_APREV,
@@ -29,14 +29,14 @@ namespace LayoutLibrary.Revolution
         Zero//GX_CC_ZERO //0
     }
 
-    public enum Bias
+    public enum GXBias
     {
         Zero,//GX_TB_ZERO,
         AddHalf,//GX_TB_ADDHALF,
         SubHalf//GX_TB_SUBHALF
     }
 
-    public enum TevColorRegID
+    public enum GXTevColorRegID
     {
         OutputColor,
         Color0,
@@ -44,7 +44,7 @@ namespace LayoutLibrary.Revolution
         Color2,
     }
 
-    public enum TevColorOp
+    public enum GXTevColorOp
     {
         Add = 0,
         Subtract = 1,
@@ -62,7 +62,7 @@ namespace LayoutLibrary.Revolution
         //GX_TEV_COMP_A8_EQ = GX_TEV_COMP_RGB8_EQ  // for alpha channel
     }
 
-    public enum TevAlphaRegID
+    public enum GXTevAlphaRegID
     {
         OutputAlpha,
         Alpha0,
@@ -70,7 +70,7 @@ namespace LayoutLibrary.Revolution
         Alpha2,
     }
 
-    public enum AlphaArg
+    public enum GXAlphaArg
     {
         OutputAlpha,//GX_CA_APREV,
         Alpha0,//GX_CA_A0,
@@ -82,7 +82,7 @@ namespace LayoutLibrary.Revolution
         Zero//GX_CA_ZERO //0
     }
 
-    public enum TevAlphaOp
+    public enum GXTevAlphaOp
     {
         Add = 0,
         Subtract = 1,
@@ -97,7 +97,7 @@ namespace LayoutLibrary.Revolution
         CompA8Equal = 15,
     }
 
-    public enum TevScale
+    public enum GXTevScale
     {
         MultiplyBy1,//GX_CS_SCALE_1,
         MultiplyBy2,//GX_CS_SCALE_2,

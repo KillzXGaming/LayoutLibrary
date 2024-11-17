@@ -1,4 +1,5 @@
 ﻿using LayoutLibrary.Cafe;
+using LayoutLibrary.Sections.Rev;
 using LayoutLibrary.XmlConverter;
 using System;
 using System.Collections.Generic;
@@ -140,6 +141,7 @@ namespace LayoutLibrary.XmlConverter
 
         [XmlElement("Material", typeof(XmlMaterialCafe))]
         [XmlElement("MaterialCtr", typeof(XmlMaterialCtr))]
+        [XmlElement("MaterialRev", typeof(XmlMaterialRev))]
         public XmlMaterialBase Material;
     }
 
@@ -149,6 +151,7 @@ namespace LayoutLibrary.XmlConverter
 
         [XmlElement("Material", typeof(XmlMaterialCafe))]
         [XmlElement("MaterialCtr", typeof(XmlMaterialCtr))]
+        [XmlElement("MaterialRev", typeof(XmlMaterialRev))]
         public XmlMaterialBase Material;
     }
 }

@@ -14,6 +14,7 @@ namespace LayoutLibrary.Revolution
         public byte ScaleS { get; set; }
         public byte ScaleT { get; set; }
 
+        public IndirectStage() { }
         public IndirectStage(FileReader reader)
         {
             TexCoord = reader.ReadByte();

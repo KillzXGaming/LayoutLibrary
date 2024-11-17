@@ -1,4 +1,5 @@
 ﻿using LayoutLibrary.Cafe;
+using LayoutLibrary.Sections.Rev;
 using LayoutLibrary.XmlConverter;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,8 @@ namespace LayoutLibrary.XmlConverter
                 return new XmlMaterialCafe((MaterialCafe)mat, bflyt, index);
             if (mat is MaterialCtr)
                 return new XmlMaterialCtr((MaterialCtr)mat, bflyt, index);
+            if (mat is MaterialRev)
+                return new XmlMaterialRev((MaterialRev)mat, bflyt, index);
 
             return new XmlMaterialCafe((MaterialCafe)mat, bflyt, index);
         }
@@ -34,6 +37,8 @@ namespace LayoutLibrary.XmlConverter
         {
             if (xmlmat is XmlMaterialCtr)
                 return ((XmlMaterialCtr)xmlmat).Create(bflyt);
+            if (xmlmat is XmlMaterialRev)
+                return ((XmlMaterialRev)xmlmat).Create(bflyt);
 
             return ((XmlMaterialCafe)xmlmat).Create(bflyt);
         }

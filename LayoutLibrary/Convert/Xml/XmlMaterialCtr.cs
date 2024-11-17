@@ -92,7 +92,6 @@ namespace LayoutLibrary.XmlConverter
             if (this.ProjectionTexGens.Count == 0) this.ProjectionTexGens = null;
             if (this.TexCoordGens.Count == 0) this.TexCoordGens = null;
             if (this.TextureSrts.Count == 0) this.TextureSrts = null;
-
         }
 
         public MaterialCtr Create(BflytFile bflyt)

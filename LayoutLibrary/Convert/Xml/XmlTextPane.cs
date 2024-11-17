@@ -1,4 +1,5 @@
 ﻿using LayoutLibrary.Cafe;
+using LayoutLibrary.Sections.Rev;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,6 +51,7 @@ namespace LayoutLibrary.XmlConverter
 
         [XmlElement("Material", typeof(XmlMaterialCafe))]
         [XmlElement("MaterialCtr", typeof(XmlMaterialCtr))]
+        [XmlElement("MaterialRev", typeof(XmlMaterialRev))]
         public XmlMaterialBase Material;
 
         public XmlTextPane() { }

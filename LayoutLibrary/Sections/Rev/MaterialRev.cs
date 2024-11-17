@@ -12,7 +12,7 @@ namespace LayoutLibrary.Sections.Rev
 {
     public class MaterialRev : MaterialBase
     {
-        public MaterialBitfield Flags;
+        public MaterialBitfield Flags = new MaterialBitfield(0);
 
         public override string Name { get; set; } = "";
 
@@ -40,6 +40,7 @@ namespace LayoutLibrary.Sections.Rev
         public AlphaCompareRev AlphaCompare { get; set; }
         public BlendMode BlendMode { get; set; }
 
+        public MaterialRev() { }
         public MaterialRev(FileReader reader) : base()
         {
             Name = reader.ReadFixedString(0x14);
@@ -110,6 +111,13 @@ namespace LayoutLibrary.Sections.Rev
 
         internal override void WriteMaterial(FileWriter writer, LayoutHeader header)
         {
+            this.Flags.TextureCount = (byte)this.TextureMaps.Count;
+            this.Flags.TexCoordGenCount = (byte)this.TexCoordGens.Count;
+            this.Flags.TexSrtCount = (byte)this.TextureSrts.Count;
+            this.Flags.IndTexOrderCount = (byte)this.IndirectStages.Count;
+            this.Flags.TevStagesCount = (byte)this.TevStages.Count;
+            this.Flags.IndTexSrtCount = (byte)this.IndirectTexTransforms.Count;
+
             writer.WriteFixedString(Name, 0x14);
             writer.Write(BlackColor.ToUInt16s());
             writer.Write(WhiteColor.ToUInt16s());
@@ -242,8 +250,8 @@ namespace LayoutLibrary.Sections.Rev
 
             public byte TextureCount
             {
-                get => GetBits(24, 4);
-                set => SetBits(24, 4, value);
+                get => GetBits(28, 4);
+                set => SetBits(28, 4, value);
             }
 
             public MaterialBitfield(uint flags)
@@ -268,9 +276,10 @@ namespace LayoutLibrary.Sections.Rev
                 for (int i = startBit; i < startBit + count; i++)
                     mask |= (0x80000000 >> i);
 
-                value &= mask == 0 ? (uint)1 : (uint)0;
-                value |= (uint)(value << (32 - (startBit + count))) & mask;
-                _data = value;
+                _data &= ~mask;
+                uint alignedValue = (uint)value << (32 - (startBit + count));
+
+                _data |= alignedValue & mask;
             }
         }
     }

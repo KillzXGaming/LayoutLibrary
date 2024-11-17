@@ -22,51 +22,51 @@ namespace LayoutBXLYT.Revolution
         [Category("Color Output")]
         public TevKColorSel ColorConstantSel { get; set; }
         [Category("Color Output")]
-        public ColorArg ColorA { get; set; }
+        public GXColorArg ColorA { get; set; }
         [Category("Color Output")]
-        public ColorArg ColorB { get; set; }
+        public GXColorArg ColorB { get; set; }
         [Category("Color Output")]
-        public ColorArg ColorC { get; set; }
+        public GXColorArg ColorC { get; set; }
         [Category("Color Output")]
-        public ColorArg ColorD { get; set; }
+        public GXColorArg ColorD { get; set; }
         [Category("Color Output")]
-        public Bias ColorBias { get; set; }
+        public GXBias ColorBias { get; set; }
         [Category("Color Output")]
-        public TevColorOp ColorOp { get; set; }
+        public GXTevColorOp ColorOp { get; set; }
         [Category("Color Output")]
         public bool ColorClamp { get; set; }
         [Category("Color Output")]
-        public TevScale ColorScale { get; set; }
+        public GXTevScale ColorScale { get; set; }
         [Category("Color Output")]
-        public TevColorRegID ColorRegID { get; set; }
+        public GXTevColorRegID ColorRegID { get; set; }
 
         [Category("Alpha Output")]
         public TevKAlphaSel AlphaConstantSel { get; set; }
         [Category("Alpha Output")]
-        public AlphaArg AlphaA { get; set; }
+        public GXAlphaArg AlphaA { get; set; }
         [Category("Alpha Output")]
-        public AlphaArg AlphaB { get; set; }
+        public GXAlphaArg AlphaB { get; set; }
         [Category("Alpha Output")]
-        public AlphaArg AlphaC { get; set; }
+        public GXAlphaArg AlphaC { get; set; }
         [Category("Alpha Output")]
-        public AlphaArg AlphaD { get; set; }
+        public GXAlphaArg AlphaD { get; set; }
         [Category("Alpha Output")]
-        public Bias AlphaBias { get; set; }
+        public GXBias AlphaBias { get; set; }
         [Category("Alpha Output")]
-        public TevAlphaOp AlphaOp { get; set; }
+        public GXTevAlphaOp AlphaOp { get; set; }
         [Category("Alpha Output")]
         public bool AlphaClamp { get; set; }
         [Category("Alpha Output")]
-        public TevScale AlphaScale { get; set; }
+        public GXTevScale AlphaScale { get; set; }
         [Category("Alpha Output")]
-        public TevAlphaRegID AlphaRegID { get; set; }
+        public GXTevAlphaRegID AlphaRegID { get; set; }
 
         [Category("Indirect Texturing")]
         public IndTexFormat Format { get; set; }
         [Category("Indirect Texturing")]
         public byte TexID { get; set; }
         [Category("Indirect Texturing")]
-        public Bias IndBias { get; set; }
+        public GXBias IndBias { get; set; }
 
         [Category("Indirect Texturing")]
         public IndTexMtxID Matrix { get; set; }
@@ -89,31 +89,31 @@ namespace LayoutBXLYT.Revolution
             RasSel = TevSwapSel.Swap0;
             TexSel = TevSwapSel.Swap0;
 
-            ColorA = ColorArg.Zero;
-            ColorB = ColorArg.Zero;
-            ColorC = ColorArg.Zero;
-            ColorD = ColorArg.Zero;
-            ColorOp = TevColorOp.Add;
-            ColorBias = Bias.Zero;
-            ColorScale = TevScale.MultiplyBy1;
+            ColorA = GXColorArg.Zero;
+            ColorB = GXColorArg.Zero;
+            ColorC = GXColorArg.Zero;
+            ColorD = GXColorArg.Zero;
+            ColorOp = GXTevColorOp.Add;
+            ColorBias = GXBias.Zero;
+            ColorScale = GXTevScale.MultiplyBy1;
             ColorClamp = true;
-            ColorRegID = TevColorRegID.OutputColor;
+            ColorRegID = GXTevColorRegID.OutputColor;
             ColorConstantSel = TevKColorSel.Constant1_1;
 
-            AlphaA = AlphaArg.Zero;
-            AlphaB = AlphaArg.Zero;
-            AlphaC = AlphaArg.Zero;
-            AlphaD = AlphaArg.Zero;
-            AlphaOp = TevAlphaOp.Add;
-            AlphaBias = Bias.Zero;
-            AlphaScale = TevScale.MultiplyBy1;
+            AlphaA = GXAlphaArg.Zero;
+            AlphaB = GXAlphaArg.Zero;
+            AlphaC = GXAlphaArg.Zero;
+            AlphaD = GXAlphaArg.Zero;
+            AlphaOp = GXTevAlphaOp.Add;
+            AlphaBias = GXBias.Zero;
+            AlphaScale = GXTevScale.MultiplyBy1;
             AlphaClamp = true;
-            AlphaRegID = TevAlphaRegID.OutputAlpha;
+            AlphaRegID = GXTevAlphaRegID.OutputAlpha;
             AlphaConstantSel = TevKAlphaSel.Constant1_1;
 
             TexID = 0;
             Format = IndTexFormat.F_8_Bit_Offsets;
-            IndBias = Bias.Zero;
+            IndBias = GXBias.Zero;
             Matrix = IndTexMtxID.Matrix0;
             WrapS = IndTexWrap.NoWrap;
             WrapT = IndTexWrap.NoWrap;
@@ -133,39 +133,39 @@ namespace LayoutBXLYT.Revolution
             TexSel = (TevSwapSel)(tmp16 >> 11);
 
             byte tmp8 = reader.ReadByte();
-            ColorA = (ColorArg)(tmp8 & 0xf);
-            ColorB = (ColorArg)(tmp8 >> 4);
+            ColorA = (GXColorArg)(tmp8 & 0xf);
+            ColorB = (GXColorArg)(tmp8 >> 4);
             tmp8 = reader.ReadByte();
-            ColorC = (ColorArg)(tmp8 & 0xf);
-            ColorD = (ColorArg)(tmp8 >> 4);
+            ColorC = (GXColorArg)(tmp8 & 0xf);
+            ColorD = (GXColorArg)(tmp8 >> 4);
             tmp8 = reader.ReadByte();
-            ColorOp = (TevColorOp)(tmp8 & 0xf);
-            ColorBias = (Bias)((tmp8 & 0x3f) >> 4);
-            ColorScale = (TevScale)(tmp8 >> 6);
+            ColorOp = (GXTevColorOp)(tmp8 & 0xf);
+            ColorBias = (GXBias)((tmp8 & 0x3f) >> 4);
+            ColorScale = (GXTevScale)(tmp8 >> 6);
             tmp8 = reader.ReadByte();
             ColorClamp = (tmp8 & 0x1) == 1;
-            ColorRegID = (TevColorRegID)((tmp8 & 0x7) >> 1);
+            ColorRegID = (GXTevColorRegID)((tmp8 & 0x7) >> 1);
             ColorConstantSel = (TevKColorSel)(tmp8 >> 3);
 
             tmp8 = reader.ReadByte();
-            AlphaA = (AlphaArg)(tmp8 & 0xf);
-            AlphaB = (AlphaArg)(tmp8 >> 4);
+            AlphaA = (GXAlphaArg)(tmp8 & 0xf);
+            AlphaB = (GXAlphaArg)(tmp8 >> 4);
             tmp8 = reader.ReadByte();
-            AlphaC = (AlphaArg)(tmp8 & 0xf);
-            AlphaD = (AlphaArg)(tmp8 >> 4);
+            AlphaC = (GXAlphaArg)(tmp8 & 0xf);
+            AlphaD = (GXAlphaArg)(tmp8 >> 4);
             tmp8 = reader.ReadByte();
-            AlphaOp = (TevAlphaOp)(tmp8 & 0xf);
-            AlphaBias = (Bias)((tmp8 & 0x3f) >> 4);
-            AlphaScale = (TevScale)(tmp8 >> 6);
+            AlphaOp = (GXTevAlphaOp)(tmp8 & 0xf);
+            AlphaBias = (GXBias)((tmp8 & 0x3f) >> 4);
+            AlphaScale = (GXTevScale)(tmp8 >> 6);
             tmp8 = reader.ReadByte();
             AlphaClamp = (tmp8 & 0x1) == 1;
-            AlphaRegID = (TevAlphaRegID)((tmp8 & 0x7) >> 1);
+            AlphaRegID = (GXTevAlphaRegID)((tmp8 & 0x7) >> 1);
             AlphaConstantSel = (TevKAlphaSel)(tmp8 >> 3);
 
             tmp8 = reader.ReadByte();
             TexID = (byte)(tmp8 & 0x3);
             tmp8 = reader.ReadByte();
-            IndBias = (Bias)(tmp8 & 0x7);
+            IndBias = (GXBias)(tmp8 & 0x7);
             Matrix = (IndTexMtxID)((tmp8 & 0x7F) >> 3);
             tmp8 = reader.ReadByte();
             WrapS = (IndTexWrap)(tmp8 & 0x7);
