@@ -31,6 +31,9 @@ namespace LayoutLibrary.XmlConverter
         public bool Visible;
 
         [XmlAttribute()]
+        public bool InfluenceAlpha;
+        
+        [XmlAttribute()]
         public byte Alpha;
 
         [XmlAttribute()]
@@ -71,6 +74,7 @@ namespace LayoutLibrary.XmlConverter
             this.UserDataInfo = pane.UserDataInfo;
             this.Flags1 = pane.Flags1;
             this.Visible = pane.Visible;
+            this.InfluenceAlpha = pane.InfluenceAlpha;
 
             this.Children = new XmlPane[pane.Children.Count];
             for (int i = 0; i < pane.Children.Count; i++)
@@ -144,6 +148,7 @@ namespace LayoutLibrary.XmlConverter
             pane.PaneMagFlags = this.PaneMagFlags;
             pane.UserDataInfo = this.UserDataInfo;
             pane.Visible = this.Visible;
+            pane.InfluenceAlpha = this.InfluenceAlpha;
 
             if (this.UserData != null)
                 pane.UserData = this.UserData.Create();
