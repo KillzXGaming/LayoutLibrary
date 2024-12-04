@@ -59,10 +59,10 @@ namespace LayoutLibrary
 
         public Color(uint rgba)
         {
-            R = ((byte)((rgba >> 24) & 0xFF)) / 255f;
-            G = ((byte)((rgba >> 16) & 0xFF)) / 255f; 
-            B = ((byte)((rgba >> 8) & 0xFF)) / 255f; 
-            A = ((byte)(rgba & 0xFF)) / 255f; 
+            A = ((byte)((rgba >> 24) & 0xFF)) / 255f;
+            B = ((byte)((rgba >> 16) & 0xFF)) / 255f; 
+            G = ((byte)((rgba >> 8) & 0xFF)) / 255f; 
+            R = ((byte)(rgba & 0xFF)) / 255f; 
         }
 
         public uint ToUInt32()
@@ -72,7 +72,7 @@ namespace LayoutLibrary
             byte b = (byte)(B * 255);
             byte a = (byte)(A * 255);
 
-            return ((uint)r << 24) | ((uint)g << 16) | ((uint)b << 8) | a;
+            return ((uint)a << 24) | ((uint)b << 16) | ((uint)g << 8) | r;
         }
     }
 }

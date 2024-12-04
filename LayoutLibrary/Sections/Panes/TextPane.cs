@@ -308,7 +308,12 @@ namespace LayoutLibrary
                 else
                     writer.Write(Encoding.Unicode.GetBytes(this.Text));
                 writer.Write((byte)0);
-                writer.Align(4);
+                writer.AlignBytes(4);
+            }
+            else if (this.TextLength > 0)
+            {
+                writer.Write(new byte[this.TextLength]);
+                writer.AlignBytes(4);
             }
 
             if (!string.IsNullOrEmpty(this.TextBoxName))

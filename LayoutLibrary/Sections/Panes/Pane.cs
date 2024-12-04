@@ -51,22 +51,22 @@ namespace LayoutLibrary
         /// <summary>
         /// The origin placement on the X axis.
         /// </summary>
-        public virtual OriginX OriginX { get; set; }
+        public virtual OriginX OriginX { get; set; } = OriginX.Center;
 
         /// <summary>
         /// The origin placement on the Y axis.
         /// </summary>
-        public virtual OriginY OriginY { get; set; }
+        public virtual OriginY OriginY { get; set; } = OriginY.Center;
 
         /// <summary>
         /// The parent origin placement on the X axis.
         /// </summary>
-        public virtual OriginX ParentOriginX { get; set; }
+        public virtual OriginX ParentOriginX { get; set; } = OriginX.Center;
 
         /// <summary>
         /// The parent origin placement on the Y axis.
         /// </summary>
-        public virtual OriginY ParentOriginY { get; set; }
+        public virtual OriginY ParentOriginY { get; set; } = OriginY.Center;
 
         /// <summary>
         /// The alpha of the pane.
@@ -147,6 +147,50 @@ namespace LayoutLibrary
         /// Pane user data.
         /// </summary>
         public UserData UserData { get; set; }
+
+        /// <summary>
+        /// Calculates the world position of the pane including the origin and parent origin alignment
+        /// </summary>
+        public Vector3 GetLocalPosition()
+        {
+            var base_pos_x = this.GetBasePositionX(OriginX);
+            var base_pos_y = this.GetBasePositionY(OriginY);
+
+            if (this.Parent != null)
+            {
+                base_pos_x += this.Parent.GetBasePositionX(ParentOriginX);
+                base_pos_y += this.Parent.GetBasePositionY(ParentOriginY);
+            }
+
+            return new Vector3(
+                    this.Translate.X + base_pos_x,
+                    this.Translate.Y + base_pos_y,
+                    this.Translate.Z);
+        }
+
+        public float GetBasePositionX(OriginX originX)
+        {
+            switch (originX)
+            {
+                case OriginX.Center: return 0;
+                case OriginX.Left: return -this.Width / 2;
+                case OriginX.Right: return this.Width / 2;
+                default:
+                    throw new Exception($"Unknown origin x type {this.OriginX}");
+            }
+        }
+
+        public float GetBasePositionY(OriginY originY)
+        {
+            switch (originY)
+            {
+                case OriginY.Center: return 0;
+                case OriginY.Bottom: return -this.Height / 2;
+                case OriginY.Top: return this.Height / 2;
+                default:
+                    throw new Exception($"Unknown origin x type {this.OriginX}");
+            }
+        }
 
         public Pane() { }
 

@@ -26,6 +26,8 @@ namespace LayoutLibrary
 
         public ushort GetMaterialIndex(MaterialBase material)
         {
+            return (ushort)material.Index;
+
             var idx = Materials.FindIndex(x => x.Name == material.Name);
             if (idx == -1)
             {
@@ -209,13 +211,13 @@ namespace LayoutLibrary
     public class MaterialDetailedCombiner
     {
         public uint Value1;
-        public uint Value2;
 
         public Color Color1;
         public Color Color2;
         public Color Color3;
         public Color Color4;
         public Color Color5;
+        public Color Color6;
 
         public List<MaterialDetailedCombinerEntry> Entries = new List<MaterialDetailedCombinerEntry>();
     }
@@ -237,16 +239,14 @@ namespace LayoutLibrary
         public int ColorFlags;
         public int AlphaFlags;
         public uint Unknown2; //34
-        public uint Unknown3;
 
         public MaterialDetailedCombinerEntry() { }
         public MaterialDetailedCombinerEntry(FileReader reader)
         {
-            Unknown1 = reader.ReadUInt32();
             ColorFlags = reader.ReadInt32();
             AlphaFlags = reader.ReadInt32();
+            Unknown1 = reader.ReadUInt32();
             Unknown2 = reader.ReadUInt32();
-            Unknown3 = reader.ReadUInt32();
 
             ColorSources[0] = (TevSource)BitUtils.GetBits(ColorFlags, 0, 4);
             ColorSources[1] = (TevSource)BitUtils.GetBits(ColorFlags, 4, 4);
@@ -269,11 +269,10 @@ namespace LayoutLibrary
 
         public void Write(FileWriter writer)
         {
-            writer.Write(Unknown1);
             writer.Write(ColorFlags);
             writer.Write(AlphaFlags);
+            writer.Write(Unknown1);
             writer.Write(Unknown2);
-            writer.Write(Unknown3);
         }
 
         public enum TevSource : byte

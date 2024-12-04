@@ -144,33 +144,15 @@ namespace LayoutLibrary
                 mat.TexCoordGens.Add(texCoordGen);
             }
 
-            if (mat.Flags.UseDetailedCombiner)
+            for (int i = 0; i < mat.Flags.TevCombinerCount; i++)
             {
-                mat.MaterialDetailedCombiner = new MaterialDetailedCombiner()
+                mat.TevCombiners.Add(new MaterialTevCombiner()
                 {
-                    Value1 = reader.ReadUInt32(),
-                    Value2 = reader.ReadUInt32(),
-                    Color1 = new Color(reader.ReadUInt32()),
-                    Color2 = new Color(reader.ReadUInt32()),
-                    Color3 = new Color(reader.ReadUInt32()),
-                    Color4 = new Color(reader.ReadUInt32()),
-                    Color5 = new Color(reader.ReadUInt32()),
-                };
-                for (int i = 0; i < mat.Flags.TevCombinerCount; i++)
-                    mat.MaterialDetailedCombiner.Entries.Add(new MaterialDetailedCombinerEntry(reader));
-            }
-            else
-            {
-                for (int i = 0; i < mat.Flags.TevCombinerCount; i++)
-                {
-                    mat.TevCombiners.Add(new MaterialTevCombiner()
-                    {
-                        ColorFlags = reader.ReadByte(),
-                        AlphaFlags = reader.ReadByte(),
-                        Reserved1 = reader.ReadByte(),
-                        Reserved2 = reader.ReadByte(),
-                    });
-                }
+                    ColorFlags = reader.ReadByte(),
+                    AlphaFlags = reader.ReadByte(),
+                    Reserved1 = reader.ReadByte(),
+                    Reserved2 = reader.ReadByte(),
+                });
             }
 
             for (int i = 0; i < mat.Flags.AlphaCompareCount; i++)
@@ -211,6 +193,22 @@ namespace LayoutLibrary
                     Rotation = reader.ReadSingle(),
                     Scale = reader.ReadVec2(),
                 });
+            }
+
+            if (mat.Flags.UseDetailedCombiner)
+            {
+                mat.MaterialDetailedCombiner = new MaterialDetailedCombiner()
+                {
+                    Value1 = reader.ReadUInt32(),
+                    Color1 = new Color(reader.ReadUInt32()),
+                    Color2 = new Color(reader.ReadUInt32()),
+                    Color3 = new Color(reader.ReadUInt32()),
+                    Color4 = new Color(reader.ReadUInt32()),
+                    Color5 = new Color(reader.ReadUInt32()),
+                    Color6 = new Color(reader.ReadUInt32()),
+                };
+                for (int i = 0; i < mat.Flags.TevCombinerCount; i++)
+                    mat.MaterialDetailedCombiner.Entries.Add(new MaterialDetailedCombinerEntry(reader));
             }
 
             for (int i = 0; i < mat.Flags.ProjectionTexGenCount; i++)
@@ -276,7 +274,6 @@ namespace LayoutLibrary
             mat.Flags.TevCombinerCount = (byte)mat.TevCombiners.Count;
             mat.Flags.AlphaCompareCount = (byte)mat.AlphaCompares.Count;
             mat.Flags.ProjectionTexGenCount = (byte)mat.ProjectionTexGens.Count;
-            mat.Flags.TevCombinerCount = (byte)(mat.MaterialDetailedCombiner.Entries.Count + mat.TevCombiners.Count);
             mat.Flags.IndirectSrtCount = (byte)(mat.IndirectSrts.Count);
             mat.Flags.UserCombinerCount = (byte)mat.UserCombiners.Count;
             mat.Flags.BrickRepeatShaderInfoCount = (byte)mat.BrickRepeatShaderInfos.Count;
@@ -347,34 +344,12 @@ namespace LayoutLibrary
                     writer.Write(mat.TexCoordGens[i].Unknown3);
             }
 
-            if (mat.MaterialDetailedCombiner.Entries.Count > 0)
+            for (int i = 0; i < mat.TevCombiners.Count; i++)
             {
-                writer.Write(mat.MaterialDetailedCombiner.Value1);
-                writer.Write(mat.MaterialDetailedCombiner.Value2);
-                writer.Write(mat.MaterialDetailedCombiner.Color1.ToUInt32());
-                writer.Write(mat.MaterialDetailedCombiner.Color2.ToUInt32());
-                writer.Write(mat.MaterialDetailedCombiner.Color3.ToUInt32());
-                writer.Write(mat.MaterialDetailedCombiner.Color4.ToUInt32());
-                writer.Write(mat.MaterialDetailedCombiner.Color5.ToUInt32());
-
-                for (int i = 0; i < mat.MaterialDetailedCombiner.Entries.Count; i++)
-                {
-                    writer.Write(mat.MaterialDetailedCombiner.Entries[i].Unknown1);
-                    writer.Write(mat.MaterialDetailedCombiner.Entries[i].ColorFlags);
-                    writer.Write(mat.MaterialDetailedCombiner.Entries[i].AlphaFlags);
-                    writer.Write(mat.MaterialDetailedCombiner.Entries[i].Unknown2);
-                    writer.Write(mat.MaterialDetailedCombiner.Entries[i].Unknown3);
-                }
-            }
-            else
-            {
-                for (int i = 0; i < mat.TevCombiners.Count; i++)
-                {
-                    writer.Write((byte)mat.TevCombiners[i].ColorFlags);
-                    writer.Write((byte)mat.TevCombiners[i].AlphaFlags);
-                    writer.Write((byte)mat.TevCombiners[i].Reserved1);
-                    writer.Write((byte)mat.TevCombiners[i].Reserved2);
-                }
+                writer.Write((byte)mat.TevCombiners[i].ColorFlags);
+                writer.Write((byte)mat.TevCombiners[i].AlphaFlags);
+                writer.Write((byte)mat.TevCombiners[i].Reserved1);
+                writer.Write((byte)mat.TevCombiners[i].Reserved2);
             }
 
             for (int i = 0; i < mat.AlphaCompares.Count; i++)
@@ -404,6 +379,20 @@ namespace LayoutLibrary
             {
                 writer.Write(mat.IndirectSrts[i].Rotation);
                 writer.Write(mat.IndirectSrts[i].Scale);
+            }
+
+            if (mat.MaterialDetailedCombiner.Entries.Count > 0)
+            {
+                writer.Write(mat.MaterialDetailedCombiner.Value1);
+                writer.Write(mat.MaterialDetailedCombiner.Color1.ToUInt32());
+                writer.Write(mat.MaterialDetailedCombiner.Color2.ToUInt32());
+                writer.Write(mat.MaterialDetailedCombiner.Color3.ToUInt32());
+                writer.Write(mat.MaterialDetailedCombiner.Color4.ToUInt32());
+                writer.Write(mat.MaterialDetailedCombiner.Color5.ToUInt32());
+                writer.Write(mat.MaterialDetailedCombiner.Color6.ToUInt32());
+
+                for (int i = 0; i < mat.MaterialDetailedCombiner.Entries.Count; i++)
+                    mat.MaterialDetailedCombiner.Entries[i].Write(writer);
             }
 
             for (int i = 0; i < mat.ProjectionTexGens.Count; i++)

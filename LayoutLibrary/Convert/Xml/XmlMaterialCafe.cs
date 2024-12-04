@@ -85,13 +85,13 @@ namespace LayoutLibrary.XmlConverter
             {
                 DetailedCombiner = new XmlMaterialDetailedCombiner()
                 {
+                    Value1 = material.MaterialDetailedCombiner.Value1,
                     Color1 = new XmlColor(material.MaterialDetailedCombiner.Color1),
                     Color2 = new XmlColor(material.MaterialDetailedCombiner.Color2),
                     Color3 = new XmlColor(material.MaterialDetailedCombiner.Color3),
                     Color4 = new XmlColor(material.MaterialDetailedCombiner.Color4),
                     Color5 = new XmlColor(material.MaterialDetailedCombiner.Color5),
-                    Value1 = material.MaterialDetailedCombiner.Value1,
-                    Value2 = material.MaterialDetailedCombiner.Value2,
+                    Color6 = new XmlColor(material.MaterialDetailedCombiner.Color6),
                 };
                 foreach (var entry in material.MaterialDetailedCombiner.Entries)
                     DetailedCombiner.Entries.Add(new XmlMaterialDetailedCombinerEntry()
@@ -100,7 +100,6 @@ namespace LayoutLibrary.XmlConverter
                         AlphaFlags = entry.AlphaFlags,
                         Unknown1 = entry.Unknown1,
                         Unknown2 = entry.Unknown2,
-                        Unknown3 = entry.Unknown3,
                     });
             }
 
@@ -206,13 +205,13 @@ namespace LayoutLibrary.XmlConverter
             {
                 mat.MaterialDetailedCombiner = new MaterialDetailedCombiner()
                 {
+                    Value1 = DetailedCombiner.Value1,
                     Color1 = DetailedCombiner.Color1.ToColor(),
                     Color2 = DetailedCombiner.Color2.ToColor(),
                     Color3 = DetailedCombiner.Color3.ToColor(),
                     Color4 = DetailedCombiner.Color4.ToColor(),
                     Color5 = DetailedCombiner.Color5.ToColor(),
-                    Value1 = DetailedCombiner.Value1,
-                    Value2 = DetailedCombiner.Value2,
+                    Color6 = DetailedCombiner.Color6.ToColor(),
                 };
                 foreach (var entry in DetailedCombiner.Entries)
                     mat.MaterialDetailedCombiner.Entries.Add(new MaterialDetailedCombinerEntry()
@@ -221,7 +220,6 @@ namespace LayoutLibrary.XmlConverter
                         AlphaFlags = entry.AlphaFlags,
                         Unknown1 = entry.Unknown1,
                         Unknown2 = entry.Unknown2,
-                        Unknown3 = entry.Unknown3,
                     });
             }
 
@@ -463,13 +461,13 @@ namespace LayoutLibrary.XmlConverter
     public class XmlMaterialDetailedCombiner
     {
         public uint Value1;
-        public uint Value2;
 
         public XmlColor Color1;
         public XmlColor Color2;
         public XmlColor Color3;
         public XmlColor Color4;
         public XmlColor Color5;
+        public XmlColor Color6;
 
         public List<XmlMaterialDetailedCombinerEntry> Entries = new List<XmlMaterialDetailedCombinerEntry>();
     }
@@ -480,7 +478,6 @@ namespace LayoutLibrary.XmlConverter
         public int ColorFlags;
         public int AlphaFlags;
         public uint Unknown2;
-        public uint Unknown3;
     }
 
 }

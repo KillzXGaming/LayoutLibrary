@@ -22,6 +22,30 @@ namespace LayoutLibrary
         /// </summary>
         public List<AnimationTarget> Targets = new List<AnimationTarget>();
 
+        public string GetGroupName()
+        {
+            string kind = this.Kind.Remove(0, 1); //type without first char (R/F/C)
+
+            if (TypeDefine.ContainsKey(kind))
+                return TypeDefine[kind];
+
+            return Kind;
+        }
+
+        public Dictionary<int, string> GetTargetNames()
+        {
+            Dictionary<int, string> target_types = new Dictionary<int, string>();
+
+            if (TypeEnumDefine.ContainsKey(this.Kind))
+            {
+                var targetEnum = TypeEnumDefine[this.Kind];
+                foreach (int v in Enum.GetValues(targetEnum).Cast<byte>())
+                    target_types.Add(v, Enum.GetName(targetEnum, v));
+            }
+
+            return target_types;
+        }
+
         public void Read(FileReader reader, int targetType = 0)
         {
             long pos = reader.Position;
@@ -370,6 +394,15 @@ namespace LayoutLibrary
         /// The key frame data.
         /// </summary>
         public List<KeyFrame> KeyFrames = new List<KeyFrame>();
+
+        public string GetTargetName(AnimationInfoSubGroup group)
+        {
+            Dictionary<int, string> target_types = group.GetTargetNames();
+            if (target_types.ContainsKey(this.Target))
+                return target_types[this.Target];
+
+            return this.Target.ToString();
+        }
     }
 
     /// <summary>

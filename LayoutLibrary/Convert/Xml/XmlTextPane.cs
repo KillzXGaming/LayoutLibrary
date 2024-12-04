@@ -57,7 +57,11 @@ namespace LayoutLibrary.XmlConverter
         public XmlTextPane() { }
         public XmlTextPane(TextPane pane, BflytFile bflyt)
         {
-            this.Text = pane.Text;
+            // XML adjustments
+            this.Text = pane.Text.Replace("\r\n", "{CRLF}")
+                                 .Replace("\r", "{CR}")
+                                 .Replace("\n", "{LF}");
+
             this.TextLength = pane.TextLength;
             this.MaxTextLength = pane.MaxTextLength;
             this.Material = XmlMaterialBase.Create(bflyt, pane.MaterialIndex);
@@ -104,9 +108,13 @@ namespace LayoutLibrary.XmlConverter
             if (!string.IsNullOrEmpty(this.Font) && !bflyt.FontList.Contains(this.Font))
                 bflyt.FontList.Add(this.Font);
 
+            string text_content = this.Text.Replace("{CRLF}", "\r\n")
+                                            .Replace("{CR}", "\r")
+                                            .Replace("{LF}", "\n");
+
             return new TextPane
             {
-                Text = this.Text,
+                Text = text_content,
                 TextLength = this.TextLength,
                 MaxTextLength = this.MaxTextLength,
                 MaterialIndex =  bflyt.MaterialTable.GetMaterialIndex(material),
