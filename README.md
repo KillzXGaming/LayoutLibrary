@@ -1,2 +1,2 @@
 # LayoutLibrary
-A UI library for handling FLYT and FLAN file binaries.
+A UI library for handling BFLYT and BFLAN file binaries.
