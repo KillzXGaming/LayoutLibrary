@@ -86,10 +86,10 @@ namespace LayoutLibrary.XmlConverter
                 DetailedCombiner = new XmlMaterialDetailedCombiner()
                 {
                     Color1 = new XmlColor(material.MaterialDetailedCombiner.Color1),
-                    Color2 = new XmlColor(material.MaterialDetailedCombiner.Color1),
-                    Color3 = new XmlColor(material.MaterialDetailedCombiner.Color1),
-                    Color4 = new XmlColor(material.MaterialDetailedCombiner.Color1),
-                    Color5 = new XmlColor(material.MaterialDetailedCombiner.Color1),
+                    Color2 = new XmlColor(material.MaterialDetailedCombiner.Color2),
+                    Color3 = new XmlColor(material.MaterialDetailedCombiner.Color3),
+                    Color4 = new XmlColor(material.MaterialDetailedCombiner.Color4),
+                    Color5 = new XmlColor(material.MaterialDetailedCombiner.Color5),
                     Value1 = material.MaterialDetailedCombiner.Value1,
                     Value2 = material.MaterialDetailedCombiner.Value2,
                 };
