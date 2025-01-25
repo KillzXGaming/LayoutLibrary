@@ -58,6 +58,9 @@ namespace LayoutLibrary.XmlConverter
         public XmlTextPane(TextPane pane, BflytFile bflyt)
         {
             // XML adjustments
+            if (pane.Text == null)
+                pane.Text = "";
+
             this.Text = pane.Text.Replace("\r\n", "{CRLF}")
                                  .Replace("\r", "{CR}")
                                  .Replace("\n", "{LF}");

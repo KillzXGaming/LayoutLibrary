@@ -33,7 +33,8 @@ namespace LayoutLibrary.Revolution
     {
         Zero,//GX_TB_ZERO,
         AddHalf,//GX_TB_ADDHALF,
-        SubHalf//GX_TB_SUBHALF
+        SubHalf, //GX_TB_SUBHALF
+        Bias_0x7 = 0x7,
     }
 
     public enum GXTevColorRegID
@@ -183,6 +184,7 @@ namespace LayoutLibrary.Revolution
         Swap1,//GX_TEV_SWAP1,
         Swap2,//GX_TEV_SWAP2,
         Swap3,//GX_TEV_SWAP3
+        Swap_0x31 = 31,
     }
 
     public enum TexMapID
@@ -197,7 +199,8 @@ namespace LayoutLibrary.Revolution
         TexMap7,//GX_TEXMAP7,
                 //GX_MAX_TEXMAP,
 
-        //GX_TEXMAP_NULL = 0xff,
+        GX_TEXMAP_NULL = 256,
+
         //GX_TEX_DISABLE = 0x100	// mask : disables texture look up
     }
 
@@ -212,7 +215,7 @@ namespace LayoutLibrary.Revolution
         TexCoord6,//GX_TEXCOORD6, 		// generated texture coordinate 6
         TexCoord7,//GX_TEXCOORD7, 		// generated texture coordinate 7
                   //GX_MAX_TEXCOORD = 8,
-                  //GX_TEXCOORD_NULL = 0xff
+        GX_TEXCOORD_NULL = 255,
     }
 
     public enum IndTexMtxID
