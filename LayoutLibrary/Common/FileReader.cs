@@ -11,14 +11,16 @@ namespace LayoutLibrary
     {
         internal bool ReverseMagic = false;
 
-        public FileReader(Stream stream) : base(stream) { 
+        public FileReader(Stream stream) : base(stream)
+        {
 
         }
 
-        public string ReadFixedString(int count)
+        public string ReadFixedString(int count, bool nullTerminated = false)
         {
             var buffer = ReadBytes(count);
-            return this.Encoding.GetString(buffer).Replace("\0", "");
+            var value = this.Encoding.GetString(buffer);
+            return nullTerminated ? value.Substring(0, Math.Max(0, value.IndexOf('\0'))) : value.Replace("\0", "");
         }
 
         public string ReadZeroTerminatedString() => ReadString(BinaryStringFormat.ZeroTerminated);

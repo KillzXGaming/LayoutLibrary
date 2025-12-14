@@ -65,7 +65,7 @@ namespace LayoutLibrary
 
             uint userDataOffset = 0;
             if (header.VersionMajor >= 8)
-                 userDataOffset = reader.ReadUInt32();
+                userDataOffset = reader.ReadUInt32();
 
             StartFrame = reader.ReadInt16();
             EndFrame = reader.ReadInt16();
@@ -82,7 +82,7 @@ namespace LayoutLibrary
 
             reader.SeekBegin(startPos + groupNamesOffset);
             for (int i = 0; i < groupCount; i++)
-                Groups.Add(reader.ReadFixedString(str_length));
+                Groups.Add(reader.ReadFixedString(str_length, true));
 
             if (userDataOffset != 0)
             {
@@ -130,7 +130,7 @@ namespace LayoutLibrary
             if (header.VersionMajor >= 8 && UserData != null)
             {
                 writer.WriteUint32Offset(userDataOfsPos, (int)startPos);
-                long usdPos = writer.Position ;
+                long usdPos = writer.Position;
 
                 writer.WriteSignature("usd1");
                 writer.Write(0); //size later
